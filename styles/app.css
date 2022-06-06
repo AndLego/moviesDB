@@ -1,0 +1,29 @@
+:root {
+  --half-orc: #966e3b;
+  --main-text: #d7c39a;
+  --secondary-text: #646059;
+  --button-color: #837361;
+  --black: #131313;
+  --almost-back: #2d251a;
+  --white: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+  font-family: "DM Sans", sans-serif;
+}
+
+body {
+  background-image: linear-gradient(
+    to right,
+    var(--black) 0%,
+    var(--almost-back) 100%
+  );
+  color: var(--white);
+}

@@ -1,0 +1,19 @@
+{
+  "name": "moviesdb",
+  "version": "1.0.0",
+  "description": "Small project using a movie API",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndLego/moviesDB.git"
+  },
+  "author": "@AndLego",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AndLego/moviesDB/issues"
+  },
+  "homepage": "https://github.com/AndLego/moviesDB#readme"
+}
