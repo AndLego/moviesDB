@@ -6,6 +6,35 @@
   --black: #131313;
   --almost-back: #2d251a;
   --white: #ffffff;
+
+  --title-size: 1.6rem;
+
+  /* genres id colors */
+
+  --action: radial-gradient(
+    circle,
+    #ff7b00,
+    #ff8500,
+    #ff8f00,
+    #ff9900,
+    #ffa200
+  );
+  --adventure: radial-gradient(
+    circle,
+    #006400,
+    #006b00,
+    #007200,
+    #007900,
+    #008000
+  );
+  --animation: radial-gradient(
+    circle,
+    #431259,
+    #4b1965,
+    #522172,
+    #59287f,
+    #60308c
+  );
 }
 
 * {
@@ -26,4 +55,170 @@ body {
     var(--almost-back) 100%
   );
   color: var(--white);
+  font-size: 1.6rem;
+  margin-bottom: 6rem;
+}
+
+/* header */
+
+.header-title {
+  text-align: center;
+  padding: 12px;
+}
+
+/* navbar */
+
+.navbar {
+  display: flex;
+  width: 100%;
+  height: 60px;
+  background: var(--almost-back);
+  justify-content: space-around;
+  font-size: 1.2rem;
+  position: fixed;
+  bottom: -2px;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-item i {
+  font-size: 1.8rem;
+}
+
+/* List Section */
+
+.list-container {
+  padding: 16px;
+}
+
+.list-title {
+  font-size: var(--title-size);
+  margin-bottom: 8px;
+}
+
+.movie-img {
+  width: 150px;
+  height: 225px;
+}
+
+/* scrolling List */
+
+.trendingPreview-List,
+.networks-List, .people-List,
+.genres-list, .generic-List {
+  display: flex;
+  gap: 12px;
+  overflow: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+
+/* Network */
+
+.network-container {
+  background: var(--almost-back);
+  height: 76px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+}
+
+.network-img {
+  width: 76px;
+  padding: 10px;
+}
+
+/* People */
+
+.people-container {
+  position: relative;
+  width: 76px;
+  height: 108px;
+}
+
+.people-container::after{
+  display: block;
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 52%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  margin-top: -150px;
+  height: 150px;
+  width: 100%;
+  content: '';
+
+}
+
+.people-img {
+  width: 68px;
+  border-radius: 4px;
+}
+
+.people-name {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  text-align: center;
+  bottom: calc(8%);
+  font-size: 1rem;
+}
+
+/* GENRES */
+
+.genres-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.genres-title .genres-tv {
+  margin-left: 16px;
+  margin-right: 8px;
+}
+
+.genres-option {
+  font-size: 1rem;
+}
+
+.category-title {
+  background: var(--idColor);
+  height: 54px;
+  width: 92px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+#id28 {
+  --idColor: var(--action);
+}
+#id12 {
+  --idColor: var(--adventure);
+}
+#id16 {
+  --idColor: var(--animation);
+}
+
+/* Generic list */
+
+.generic-img{
+  height: 140px
+}
+
+
+.inactive {
+  display: none;
 }
