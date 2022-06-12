@@ -8,6 +8,7 @@
   --white: #ffffff;
 
   --title-size: 1.6rem;
+  --content-size: 1.2rem;
 
   /* genres id colors */
 
@@ -110,15 +111,17 @@ body {
 /* scrolling List */
 
 .trendingPreview-List,
-.networks-List, .people-List,
-.genres-list, .generic-List {
+.networks-List,
+.people-List,
+.genres-list,
+.generic-List,
+.related-scrollContainer {
   display: flex;
   gap: 12px;
   overflow: scroll;
   overflow-y: hidden;
   white-space: nowrap;
 }
-
 
 /* Network */
 
@@ -144,7 +147,7 @@ body {
   height: 108px;
 }
 
-.people-container::after{
+.people-container::after {
   display: block;
   position: relative;
   background: linear-gradient(
@@ -155,8 +158,7 @@ body {
   margin-top: -150px;
   height: 150px;
   width: 100%;
-  content: '';
-
+  content: "";
 }
 
 .people-img {
@@ -214,10 +216,139 @@ body {
 
 /* Generic list */
 
-.generic-img{
-  height: 140px
+.generic-img {
+  height: 140px;
 }
 
+/* Detail section */
+
+.header-arrow {
+  position: fixed;
+  color: white;
+  left: 16px;
+  top: 24px;
+  z-index: 1;
+  background: black;
+  width: 24px;
+  height: 24px;
+  border-radius: 25px;
+  text-align: center;
+  padding: 2px;
+  background-color: rgba(0, 0, 0, 0.21);
+}
+
+.detail-img {
+  height: 33vh;
+  width: 100%;
+  position: relative;
+}
+
+.show-Portrait::after {
+  display: block;
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 44%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  margin-top: -154px;
+  height: 150px;
+  width: 100%;
+  content: "";
+  border-bottom: 1px solid var(--secondary-text);
+}
+
+.show-Portrait__info {
+  padding: 16px;
+  position: absolute;
+  top: calc(24%);
+}
+
+.show-Detail-title {
+  font-size: 1.8rem;
+}
+
+.released-date {
+  font-size: var(--content-size);
+  color: var(--main-text);
+}
+
+.show-Description {
+  padding: 16px;
+  border-bottom: 1px solid var(--secondary-text);
+}
+
+.show-Genre {
+  color: var(--button-color);
+  font-size: var(--content-size);
+}
+
+.show-Detail-description {
+  color: var(--main-text);
+  font-size: var(--content-size);
+  margin-top: 8px;
+}
+
+.show-data {
+  padding: 16px;
+  display: flex;
+  justify-content: space-evenly;
+  border-bottom: 1px solid var(--secondary-text);
+}
+
+.show-info {
+  padding: 16px;
+  border-top: 1px solid var(--secondary-text);
+  border-bottom: 1px solid var(--secondary-text);
+}
+
+.show-info div {
+  font-size: var(--content-size);
+  color: var(--secondary-text);
+  margin-bottom: 8px;
+}
+
+.show-info div:nth-child(4) {
+  margin-bottom: 0;
+}
+
+.show-genres {
+  padding: 16px;
+}
+
+.show-category {
+  height: 40px;
+}
+
+.related-container {
+  padding: 16px;
+}
+
+.related-img {
+  height: 140px;
+}
+
+/* GENRES SECTION CATALOGUE */
+
+.catalogue-title {
+  height: 20vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--idColor);
+}
+
+.catalogue__List {
+  padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.catalogue-img {
+  height: 152px;
+}
 
 .inactive {
   display: none;
