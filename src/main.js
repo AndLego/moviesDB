@@ -8,77 +8,72 @@ const api = axios.create({
   },
 });
 
-const getTrendingTv = async () => {
+const getAndAppendWithIndex = async (
+  path,
+  parentContainer,
+  section,
+  byname
+) => {
   try {
-    const { data } = await api("/trending/tv/day");
-    const tv = data.results;
-    tv.forEach((show, index) => {
-      const trendingTv = document.querySelector("#trendingTv .trendingTv-List");
-      const movieContainer = document.createElement("div");
-      movieContainer.classList.add("tv-container");
+    const { data } = await api(path);
+    const item = data.results;
+    section.innerHTML = "";
 
-      const tvImg = document.createElement("img");
-      tvImg.classList.add("tv-img");
-      tvImg.setAttribute("alt", tv.name);
-      tvImg.setAttribute(
+    item.forEach((show, index) => {
+      const itemContainer = document.createElement("div");
+      itemContainer.classList.add(parentContainer);
+
+      const itemImg = document.createElement("img");
+      itemImg.classList.add("item-img");
+
+      byname == "name"
+        ? itemImg.setAttribute("alt", show.name)
+        : itemImg.setAttribute("alt", show.title);
+
+      itemImg.setAttribute(
         "src",
         `https://image.tmdb.org/t/p/w300${show.poster_path}`
       );
 
-      const tvSpan = document.createElement("span");
-      tvSpan.classList.add("tv-number");
-      tvSpan.textContent = index + 1;
+      const itemSpan = document.createElement("span");
+      itemSpan.classList.add("item-number");
+      itemSpan.textContent = index + 1;
 
-      movieContainer.appendChild(tvSpan);
-      movieContainer.appendChild(tvImg);
-      trendingTv.appendChild(movieContainer);
+      itemContainer.appendChild(itemSpan);
+      itemContainer.appendChild(itemImg);
+      section.appendChild(itemContainer);
     });
   } catch (err) {
     console.error(err);
   }
 };
 
-const getTrendingMovies = async () => {
-  try {
-    const { data } = await api("/trending/movie/day");
+//TRENDING ------------------------------
 
-    const movie = data.results;
-    movie.forEach((show, index) => {
-      const trendingMovie = document.querySelector(
-        "#trendingMovies .trendingMovies-List"
-      );
-      const movieContainer = document.createElement("div");
-      movieContainer.classList.add("movie-container");
+const getTrendingTv = () => {
+  getAndAppendWithIndex(
+    "/trending/tv/day",
+    "tv-container",
+    trendingTvList,
+    "name"
+  );
+};
 
-      const movieImg = document.createElement("img");
-      movieImg.classList.add("movie-img");
-      movieImg.setAttribute("alt", movie.name);
-      movieImg.setAttribute(
-        "src",
-        `https://image.tmdb.org/t/p/w300${show.poster_path}`
-      );
-
-      const movieSpan = document.createElement("span");
-      movieSpan.classList.add("movie-number");
-      movieSpan.textContent = index + 1;
-
-      movieContainer.appendChild(movieSpan);
-      movieContainer.appendChild(movieImg);
-      trendingMovie.appendChild(movieContainer);
-    });
-  } catch (err) {
-    console.error(err);
-  }
+const getTrendingMovies = () => {
+  getAndAppendWithIndex(
+    "/trending/movie/day",
+    "movie-container",
+    trendingMovieList,
+    "title"
+  );
 };
 
 const getTrendingPeople = async () => {
   try {
     const { data } = await api("/trending/person/day");
     const person = data.results;
+    trendingPeopleList.innerHTML = "";
     person.forEach((person) => {
-      const trendingPerson = document.querySelector(
-        "#trendingPeople .people-List"
-      );
       const peopleContainer = document.createElement("div");
       peopleContainer.classList.add("people-container");
 
@@ -96,104 +91,173 @@ const getTrendingPeople = async () => {
 
       peopleContainer.appendChild(personSpan);
       peopleContainer.appendChild(personImg);
-      trendingPerson.appendChild(peopleContainer);
+      trendingPeopleList.appendChild(peopleContainer);
     });
   } catch (err) {
     console.error(err);
   }
 };
 
-const getGenresMovies = async () => {
-  try {
-    const { data } = await api("/genre/movie/list");
+//GENRES----------------------------------
 
+const getGenres = async (path, parentContainer, section, type) => {
+  try {
+    const { data } = await api(path);
     const genre = data.genres;
+    section.innerHTML = "";
     genre.forEach((genre) => {
-      const genreMovie = document.querySelector("#genres .genres-list__movies");
       const genreContainer = document.createElement("div");
-      genreContainer.classList.add("category-container");
+      genreContainer.classList.add(parentContainer);
 
       const genreName = document.createElement("h3");
       genreName.classList.add("category-title");
       genreName.setAttribute("id", `id${genre.id}`);
+      genreName.addEventListener(
+        "click",
+        () => (location.hash = `#category=${genre.id}-${genre.name}-${type}`)
+      );
       genreName.textContent = genre.name;
 
       genreContainer.appendChild(genreName);
-      genreMovie.appendChild(genreContainer);
+      section.appendChild(genreContainer);
     });
   } catch (err) {
     console.error(err);
   }
 };
 
-const getGenresTv = async () => {
-  try {
-    const { data } = await api("/genre/tv/list");
+const getGenresMovies = () => {
+  getGenres("/genre/movie/list", "category-container", genreMovieList, "movie");
+};
 
-    const genre = data.genres;
-    genre.forEach((genre) => {
-      const genreTv = document.querySelector("#genres .genres-list__tv");
-      const genreContainer = document.createElement("div");
-      genreContainer.classList.add("category-container");
-
-      const genreName = document.createElement("h3");
-      genreName.classList.add("category-title");
-      genreName.setAttribute("id", `id${genre.id}`);
-      genreName.textContent = genre.name;
-
-      genreContainer.appendChild(genreName);
-      genreTv.appendChild(genreContainer);
-    });
-  } catch (err) {
-    console.error(err);
-  }
+const getGenresTv = () => {
+  getGenres("/genre/tv/list", "category-container", genreMovieList, "tv");
 };
 
 const bringTv = () => {
-  const genreContainerMovie = document.querySelector(".genres-list__movies");
-  const genreContainerTv = document.querySelector(".genres-list__tv");
+  const genreContainer = document.querySelector(".genres-list");
+  const notCurrentButton = document.querySelector(".genres-movie");
+  const currentButton = document.querySelector(".genres-tv");
 
-  genreContainerMovie.classList.add("inactive");
-  genreContainerTv.classList.remove("inactive");
-
+  notCurrentButton.classList.add("notCurrent-genre__button");
+  notCurrentButton.removeAttribute("disabled");
+  currentButton.classList.remove("notCurrent-genre__button");
+  currentButton.setAttribute("disabled", "disabled");
+  genreContainer.innerHTML = "";
   getGenresTv();
 };
 
 const bringMovie = () => {
-  const genreContainerMovie = document.querySelector(".genres-list__movies");
-  const genreContainerTv = document.querySelector(".genres-list__tv");
+  const genreContainer = document.querySelector(".genres-list");
+  const notCurrentButton = document.querySelector(".genres-tv");
+  const currentButton = document.querySelector(".genres-movie");
 
-  genreContainerTv.classList.add("inactive");
-  genreContainerMovie.classList.remove("inactive");
-
+  notCurrentButton.classList.add("notCurrent-genre__button");
+  notCurrentButton.removeAttribute("disabled");
+  currentButton.classList.remove("notCurrent-genre__button");
+  currentButton.setAttribute("disabled", "disabled");
+  genreContainer.innerHTML = "";
   getGenresMovies();
 };
 
 const getNetworksImg = async () => {
-  const networksId = [213, 1024, 49, 2739, 2552, 453, 303, 67];
+  try {
+    const networksId = [213, 1024, 49, 2739, 2552, 453, 303, 67];
+    networksList.innerHTML = "";
+    networksId.forEach(async (item) => {
+      const { data } = await api(`/network/${item}`);
 
-  networksId.forEach(async (item) => {
-    const { data } = await api(`/network/${item}`);
+      const networkContainer = document.createElement("div");
+      networkContainer.classList.add("network-container");
 
-    const network = document.querySelector("#networks .networks-List");
-    const networkContainer = document.createElement("div");
-    networkContainer.classList.add("network-container");
+      const networkImg = document.createElement("img");
+      networkImg.classList.add("network-img");
+      networkImg.setAttribute("alt", data.name);
+      networkImg.setAttribute(
+        "src",
+        `https://image.tmdb.org/t/p/w92${data.logo_path}`
+      );
 
-    const networkImg = document.createElement("img");
-    networkImg.classList.add("network-img");
-    networkImg.setAttribute("alt", data.name);
-    networkImg.setAttribute(
-      "src",
-      `https://image.tmdb.org/t/p/w92${data.logo_path}`
-    );
+      networkContainer.appendChild(networkImg);
+      networksList.appendChild(networkContainer);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
 
-    networkContainer.appendChild(networkImg);
-    network.appendChild(networkContainer);
+//MISCELLANEOUS SECTION ---------------------
+
+const getAndAppend = async (
+  path,
+  parentContainer,
+  section,
+  byname,
+  optionalConfig = {}
+) => {
+  try {
+    const { data } = await api(path, optionalConfig);
+    const generic = data.results;
+    section.innerHTML = "";
+    console.log(data)
+    generic.forEach((show) => {
+      const genericContainer = document.createElement("div");
+      genericContainer.classList.add(`${parentContainer}-container`);
+
+      const genericImg = document.createElement("img");
+      genericImg.classList.add(`${parentContainer}-img`);
+
+      byname == "name"
+        ? genericImg.setAttribute("alt", show.name)
+        : genericImg.setAttribute("alt", show.title);
+
+      genericImg.setAttribute(
+        "src",
+        `https://image.tmdb.org/t/p/w300${show.poster_path}`
+      );
+
+      genericContainer.appendChild(genericImg);
+      section.appendChild(genericContainer);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const getPopularMovies = () => {
+  getAndAppend("/movie/popular", "generic", popularMovieList, "title")
+
+};
+
+const getPopularTv = () => {
+  getAndAppend("/tv/popular", "generic", popularTvList, "name")
+};
+
+const getUpcomingMovies = () => {
+  getAndAppend("/movie/upcoming", "generic", upcomingMoviesList, "title")
+};
+
+const getTopShows = () => {
+  getAndAppend("/tv/top_rated", "generic", topShowList, "name")
+};
+
+const getTopMovies = () => {
+  getAndAppend("/movie/top_rated", "generic", topMovieList, "title")
+};
+
+const getPopularAll = () => {
+  getAndAppend("/trending/all/day", "catalogue", popularAllList, "name")
+};
+
+const getProductByCategoryMovie = (id) => {
+  getAndAppend("/discover/movie", "catalogue", genreList, "name", {
+    params: { with_genres: id },
   });
 };
 
-getTrendingTv();
-getTrendingMovies();
-getTrendingPeople();
-getGenresMovies();
-getNetworksImg();
+const getProductByCategoryTv = (id) => {
+  getAndAppend("/discover/tv", "catalogue", genreList, "name", {
+    params: { with_genres: id },
+  });
+};
+

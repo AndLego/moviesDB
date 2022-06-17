@@ -18,25 +18,26 @@
     ></script>
   </head>
   <body>
+    <!-- header -->
     <header id="header" class="header-container">
       <span class="header-arrow inactive"><i class="fa-solid fa-arrow-left"></i></span>
-      <h1 class="header-title">MovieDB</h1>
+      <h1 class="header-title">What 2 Watch</h1>
     </header>
 
     <!-- navbar -->
 
     <nav class="navbar">
-      <div class="nav-item">
+      <div id="nav-discover" class="nav-item currentNav">
         <i class="fa-solid fa-bolt"></i><span>Discover</span>
       </div>
-      <div class="nav-item">
+      <div id="nav-search" class="nav-item">
         <i class="fa-solid fa-magnifying-glass"></i><span>Search</span>
       </div>
-      <div class="nav-item">
+      <div id="nav-trend" class="nav-item">
         <i class="fa-solid fa-earth-americas"></i><span>Trends</span>
       </div>
-      <div class="nav-item">
-        <i class="fa-solid fa-ellipsis"></i><span>More</span>
+      <div id="nav-about" class="nav-item">
+        <i class="fa-solid fa-ellipsis"></i><span>About</span>
       </div>
     </nav>
 
@@ -87,161 +88,118 @@
         <h2 class="genre-title">Genres</h2>
         <div class="genres-option">
           <button onclick="bringMovie()" class="genres-movie">Movies</button> 
-          <button onclick="bringTv()" class="genres-tv">Tv Shows</button>
+          <button onclick="bringTv()" class="genres-tv notCurrent-genre__button">Tv Shows</button>
         </div>
       </div>
 
-      <article class="genres-list__movies">
+      <article class="genres-list">
        
       </article>
-      <article class="genres-list__tv">
+
+      <!-- <article class="genres-list__tv">
        
+      </article> -->
+    </section>
+
+    <!-- Popular Movie List -->
+
+    <section id="popularMovies-list" class="list-container">
+      <h2 class="list-title">Movies - Popular</h2>
+
+      <article class="generic-List">
+    
       </article>
     </section>
 
-    <!-- Generic Lists -->
+    <!-- Popular Tv List -->
 
-    <section id="genericList" class="list-container">
-      <h2 class="list-title">Comedies</h2>
+    <section id="popularTv-list" class="list-container">
+      <h2 class="list-title">Series - Popular</h2>
 
       <article class="generic-List">
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
-
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
-
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
-
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
-
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
+        
       </article>
     </section>
 
-    <section id="genericList" class="list-container">
-      <h2 class="list-title">Comedies</h2>
+    <!-- Upcoming Movies List -->
+
+    <section id="upcomingMovies" class="list-container">
+      <h2 class="list-title">Upcoming Movies</h2>
 
       <article class="generic-List">
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
+        
+      </article>
+    </section>
 
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
+    <!-- Top show List -->
 
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
+    <section id="topShow" class="list-container">
+      <h2 class="list-title">Top Rated Shows</h2>
 
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
+      <article class="generic-List">
+        
+      </article>
+    </section>
 
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
+    <!-- Top Movies List -->
+
+    <section id="topMovie" class="list-container">
+      <h2 class="list-title">Top Rated Movies</h2>
+
+      <article class="generic-List">
+        
+      </article>
+    </section>
+
+    <!-- Trending Section -->
+
+    <section id="trending-Section" class="inactive">
+      <article class="trending-items">
+        <div class="trend-item trend-movies">
+          <h1 class="trend-title">Movies</h1>
+          <span class="trend-span">Trends</span>
+        </div>
+        <div class="trend-item trend-tv">
+          <h1 class="trend-title">Tv Shows</h1>
+          <span class="trend-span">Trends</span>
+        </div>
+        <div class="trend-item trend-m-genres">
+          <h1 class="trend-title">Movies</h1>
+          <span class="trend-span">Genres</span>
+        </div>
+        <div class="trend-item trend-tv-genres">
+          <h1 class="trend-title">Tv Shows</h1>
+          <span class="trend-span">Genres</span>
+        </div>
+        <div class="trend-item trend-people">
+          <h1 class="trend-title">People</h1>
+          <span class="trend-span">Trends</span>
+        </div>
+        <div class="trend-item trend-all">
+          <h1 class="trend-title">All</h1>
+          <span class="trend-span">Trends</span>
         </div>
       </article>
     </section>
 
-    <section id="genericList" class="list-container">
-      <h2 class="list-title">Comedies</h2>
+    <!-- Search Section -->
 
-      <article class="generic-List">
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
-
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
-
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
-
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
-
-        <div class="generic-container">
-          <img
-            src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-            class="generic-img"
-            alt="Nombre de la película"
-          />
-        </div>
+    <section id="popularAll" class="inactive">
+        <form class="group">
+          <svg class="search-icon" aria-hidden="true" viewBox="0 0 24 24"><g><path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path></g></svg>
+          <input type="search" class="input">
+        </form>
+  
+      <h2 class="list-title search-title">Popular</h2>
+  
+      <article class="catalogue__List">
+  
       </article>
     </section>
 
     <!-- Show description -->
 
-    <section id="show-Detail" class="show-Detail-container inactive">
+    <section id="show-description" class="show-Detail-container inactive">
       <div class="show-Portrait">
         <img src="https://c4.wallpaperflare.com/wallpaper/567/948/1014/buzz-lightyear-toy-story-movies-wallpaper-preview.jpg" class="detail-img" alt="">
       </div>
@@ -414,59 +372,20 @@
       </article>
     </section>
 
-    <!-- Genres Search -->
+    <!-- Genres Section -->
 
-    <section id="genre-catalogue" class="inactive">
-        <h1 id="id28" class="catalogue-title">Action</h1>
+    <section id="genre-search" class="inactive">
+        <h1 id="id53" class="catalogue-title">Action</h1>
 
         <article class="catalogue__List">
-          <div class="catalogue-container">
-            <img
-              src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-              class="catalogue-img"
-              alt="Nombre de la película"
-            />
-          </div>
-  
-          <div class="catalogue-container">
-            <img
-              src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-              class="catalogue-img"
-              alt="Nombre de la película"
-            />
-          </div>
-  
-          <div class="catalogue-container">
-            <img
-              src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-              class="catalogue-img"
-              alt="Nombre de la película"
-            />
-          </div>
-  
-          <div class="catalogue-container">
-            <img
-              src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-              class="catalogue-img"
-              alt="Nombre de la película"
-            />
-          </div>
-  
-          <div class="catalogue-container">
-            <img
-              src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
-              class="catalogue-img"
-              alt="Nombre de la película"
-            />
-          </div>
+        </article>
+         
     </section>
-
-    <!-- footer -->
-
-    <footer class="inactive">Made by @AndLego</footer>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./src/secrets.js"></script>
+    <script src="./src/nodes.js"></script>
     <script src="./src/main.js"></script>
+    <script src="./src/navigation.js"></script>
   </body>
 </html>
