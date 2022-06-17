@@ -80,10 +80,17 @@ const getTrendingPeople = async () => {
       const personImg = document.createElement("img");
       personImg.classList.add("people-img");
       personImg.setAttribute("alt", person.name);
-      personImg.setAttribute(
-        "src",
-        `https://image.tmdb.org/t/p/w185${person.profile_path}`
-      );
+      if (person.profile_path === null) {
+        personImg.setAttribute(
+          "src",
+          `https://i.postimg.cc/Y0N3p6pR/pngwing-com-10.png`
+        );
+      }else{
+        personImg.setAttribute(
+          "src",
+          `https://image.tmdb.org/t/p/w185${person.profile_path}`
+        );
+      }
 
       const personSpan = document.createElement("span");
       personSpan.classList.add("people-name");
@@ -206,14 +213,45 @@ const getAndAppend = async (
       const genericImg = document.createElement("img");
       genericImg.classList.add(`${parentContainer}-img`);
 
-      byname == "name"
-        ? genericImg.setAttribute("alt", show.name)
-        : genericImg.setAttribute("alt", show.title);
+      if(show.name === undefined){
+        genericImg.setAttribute("alt", show.title);
+      }else if (show.title === undefined){
+        genericImg.setAttribute("alt", show.name)
+      }
+  
+      if (show.media_type === "person") {
+        if (show.profile_path === null) {
+          genericImg.setAttribute(
+            "src",
+            `https://i.postimg.cc/Y0N3p6pR/pngwing-com-10.png`
+          );
+        } else {
+          genericImg.setAttribute(
+            "src",
+            `https://image.tmdb.org/t/p/w185${show.profile_path}`
+          );
+        }
+        genericContainer.classList.add(
+          `${parentContainer}-container__gradient`
+        );
 
-      genericImg.setAttribute(
-        "src",
-        `https://image.tmdb.org/t/p/w300${show.poster_path}`
-      );
+        const personSpan = document.createElement("span");
+        personSpan.classList.add("people-name");
+        personSpan.textContent = show.name;
+        genericContainer.appendChild(personSpan);
+      } else {
+        if (show.poster_path === null) {
+          genericImg.setAttribute(
+            "src",
+            `https://i.postimg.cc/0jGLLKhR/pngwing-com-13.png`
+          );
+        } else {
+          genericImg.setAttribute(
+            "src",
+            `https://image.tmdb.org/t/p/w300${show.poster_path}`
+          );
+        }
+      }
 
       genericContainer.appendChild(genericImg);
       section.appendChild(genericContainer);

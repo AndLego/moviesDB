@@ -1,11 +1,16 @@
 //Navbar Listeners ----------------------------
 
 navDiscover.addEventListener("click", () => (location.hash = "#home"));
-navSearch.addEventListener("click", () => {(location.hash = "#search=")});
+navSearch.addEventListener("click", () => {
+  location.hash = "#search=";
+});
 navTrend.addEventListener("click", () => (location.hash = "#trends"));
 navAbout.addEventListener("click", () => (location.hash = "#about"));
 
-arrowBtn.addEventListener("click", () => (location.hash = "#home"));
+arrowBtn.addEventListener(
+  "click",
+  () => (location.hash = window.history.back())
+);
 
 //Trends Listener ----------------------------------------------------------------
 
@@ -42,16 +47,17 @@ function navigator() {
     ? categoriesPage()
     : discover();
 
-    smoothscroll()
-} 
+  smoothscroll();
+}
 
-function smoothscroll(){
-  const currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+function smoothscroll() {
+  const currentScroll =
+    document.documentElement.scrollTop || document.body.scrollTop;
   if (currentScroll > 0) {
-       window.requestAnimationFrame(smoothscroll);
-       window.scrollTo (0,currentScroll - (currentScroll/5));
+    window.requestAnimationFrame(smoothscroll);
+    window.scrollTo(0, currentScroll - currentScroll / 5);
   }
-};
+}
 
 function discover() {
   console.log("home");
@@ -122,10 +128,9 @@ function searchPage() {
   navTrend.classList.remove("currentNav");
   navAbout.classList.remove("currentNav");
 
+  searching();
   const [_, query] = location.hash.split("="); // ["#search", "query"]
-  getItemBySearch(query)
-
-  getPopularAll();
+  query == "" ? getPopularAll() : getItemBySearch(query);
 }
 
 function trendsPage() {
@@ -243,13 +248,14 @@ function categoriesPage() {
 //SEARCH LISTENER ----------------------------------------
 
 function searching() {
-  event.preventDefault
-  location.hash = `#search=${searchInput.value}`
+  // console.log("hola")
+  // event.preventDefault
+  location.hash = `#search=${searchInput.value}`;
 }
 
 // window.addEventListener("load", () => {
 //   searchInput.addEventListener("change", (query) =>{
 //    location.hash = `#search=${query.target.value}`
-//    console.log(query)
+//    console.log(query.target.value)
 //   })
 // })

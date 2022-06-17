@@ -646,6 +646,26 @@ body {
   height: 1.6rem;
 }
 
+.catalogue-container {
+  position: relative;
+  /* width: 76px;
+  height: 108px; */
+}
+
+.catalogue-container__gradient::after {
+  display: block;
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 66%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  margin-top: -155px;
+  height: 150px;
+  width: 100%;
+  content: "";
+}
+
 /* Trends Section */
 
 .trending-items {
