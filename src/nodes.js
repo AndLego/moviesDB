@@ -60,3 +60,4 @@ const genreList = $("#genre-search .catalogue__List")
 
 //Elements ----------------------------------------
 const genreTitles = $(".catalogue-title")
+const searchInput = $(".group .input")

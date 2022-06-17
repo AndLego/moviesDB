@@ -1,7 +1,7 @@
 //Navbar Listeners ----------------------------
 
 navDiscover.addEventListener("click", () => (location.hash = "#home"));
-navSearch.addEventListener("click", () => (location.hash = "#search="));
+navSearch.addEventListener("click", () => {(location.hash = "#search=")});
 navTrend.addEventListener("click", () => (location.hash = "#trends"));
 navAbout.addEventListener("click", () => (location.hash = "#about"));
 
@@ -28,8 +28,6 @@ window.addEventListener("DOMContentLoaded", navigator, false);
 window.addEventListener("hashchange", navigator, false);
 
 function navigator() {
-  console.log({ location });
-
   location.hash.startsWith("#home")
     ? discover()
     : location.hash.startsWith("#search=")
@@ -43,7 +41,17 @@ function navigator() {
     : location.hash.startsWith("#category=")
     ? categoriesPage()
     : discover();
-}
+
+    smoothscroll()
+} 
+
+function smoothscroll(){
+  const currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+  if (currentScroll > 0) {
+       window.requestAnimationFrame(smoothscroll);
+       window.scrollTo (0,currentScroll - (currentScroll/5));
+  }
+};
 
 function discover() {
   console.log("home");
@@ -113,6 +121,9 @@ function searchPage() {
   navSearch.classList.add("currentNav");
   navTrend.classList.remove("currentNav");
   navAbout.classList.remove("currentNav");
+
+  const [_, query] = location.hash.split("="); // ["#search", "query"]
+  getItemBySearch(query)
 
   getPopularAll();
 }
@@ -228,3 +239,17 @@ function categoriesPage() {
     ? getProductByCategoryMovie(categoryId)
     : getProductByCategoryTv(categoryId);
 }
+
+//SEARCH LISTENER ----------------------------------------
+
+function searching() {
+  event.preventDefault
+  location.hash = `#search=${searchInput.value}`
+}
+
+// window.addEventListener("load", () => {
+//   searchInput.addEventListener("change", (query) =>{
+//    location.hash = `#search=${query.target.value}`
+//    console.log(query)
+//   })
+// })

@@ -199,7 +199,6 @@ const getAndAppend = async (
     const { data } = await api(path, optionalConfig);
     const generic = data.results;
     section.innerHTML = "";
-    console.log(data)
     generic.forEach((show) => {
       const genericContainer = document.createElement("div");
       genericContainer.classList.add(`${parentContainer}-container`);
@@ -225,28 +224,27 @@ const getAndAppend = async (
 };
 
 const getPopularMovies = () => {
-  getAndAppend("/movie/popular", "generic", popularMovieList, "title")
-
+  getAndAppend("/movie/popular", "generic", popularMovieList, "title");
 };
 
 const getPopularTv = () => {
-  getAndAppend("/tv/popular", "generic", popularTvList, "name")
+  getAndAppend("/tv/popular", "generic", popularTvList, "name");
 };
 
 const getUpcomingMovies = () => {
-  getAndAppend("/movie/upcoming", "generic", upcomingMoviesList, "title")
+  getAndAppend("/movie/upcoming", "generic", upcomingMoviesList, "title");
 };
 
 const getTopShows = () => {
-  getAndAppend("/tv/top_rated", "generic", topShowList, "name")
+  getAndAppend("/tv/top_rated", "generic", topShowList, "name");
 };
 
 const getTopMovies = () => {
-  getAndAppend("/movie/top_rated", "generic", topMovieList, "title")
+  getAndAppend("/movie/top_rated", "generic", topMovieList, "title");
 };
 
 const getPopularAll = () => {
-  getAndAppend("/trending/all/day", "catalogue", popularAllList, "name")
+  getAndAppend("/trending/all/day", "catalogue", popularAllList, "name");
 };
 
 const getProductByCategoryMovie = (id) => {
@@ -261,3 +259,8 @@ const getProductByCategoryTv = (id) => {
   });
 };
 
+const getItemBySearch = (query) => {
+  getAndAppend("/search/multi", "catalogue", popularAllList, "name", {
+    params: { query },
+  });
+};
