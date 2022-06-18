@@ -7,10 +7,9 @@ navSearch.addEventListener("click", () => {
 navTrend.addEventListener("click", () => (location.hash = "#trends"));
 navAbout.addEventListener("click", () => (location.hash = "#about"));
 
-arrowBtn.addEventListener(
-  "click",
-  () => (location.hash = window.history.back())
-);
+arrowBtn.addEventListener("click", () => {
+    history.back();
+});
 
 //Trends Listener ----------------------------------------------------------------
 
@@ -42,7 +41,7 @@ function navigator() {
     : location.hash.startsWith("#about")
     ? aboutPage()
     : location.hash.startsWith("#movie=")
-    ? movieDetailPage()
+    ? movieShowDetail()
     : location.hash.startsWith("#category=")
     ? categoriesPage()
     : discover();
@@ -101,8 +100,6 @@ function discover() {
 }
 
 function searchPage() {
-  console.log("searching!");
-
   arrowBtn.classList.add("inactive");
   headerTitle.classList.remove("inactive");
 
@@ -187,7 +184,7 @@ function aboutPage() {
   navAbout.classList.add("currentNav");
 }
 
-function movieDetailPage() {
+function movieShowDetail() {
   console.log("movie!");
 
   arrowBtn.classList.remove("inactive");
@@ -203,12 +200,21 @@ function movieDetailPage() {
   upcomingMovies.classList.add("inactive");
   topShow.classList.add("inactive");
   topMovie.classList.add("inactive");
-  navbar.classList.add("inactive");
+  navbar.classList.remove("inactive");
 
   showDescription.classList.remove("inactive");
   genreSearch.classList.add("inactive");
   searchSection.classList.add("inactive");
   trendingMenu.classList.add("inactive");
+
+  const [_, showData] = location.hash.split("="); // ["#movie=", "id-type"]
+  const [showId, type] = showData.split("-");
+
+  if(type === "movie") {
+    getMovieById(showId)
+  }else{
+    getTvById(showId)
+  }
 }
 
 function categoriesPage() {
@@ -227,7 +233,7 @@ function categoriesPage() {
   upcomingMovies.classList.add("inactive");
   topShow.classList.add("inactive");
   topMovie.classList.add("inactive");
-  navbar.classList.add("inactive");
+  navbar.classList.remove("inactive");
 
   showDescription.classList.add("inactive");
   genreSearch.classList.remove("inactive");
@@ -250,7 +256,7 @@ function categoriesPage() {
 function searching() {
   // console.log("hola")
   // event.preventDefault
-  location.hash = `#search=${searchInput.value}`;
+  location.hash = `#search=${searchInput.value.trim()}`;
 }
 
 // window.addEventListener("load", () => {

@@ -191,7 +191,7 @@ body {
     var(--black) 0%,
     var(--almost-back) 100%
   );
-  color: var(--white);
+  color: var(--main-text);
   font-size: 1.6rem;
   margin-bottom: 6rem;
 }
@@ -335,6 +335,7 @@ body {
   text-align: center;
   bottom: calc(8%);
   font-size: 1rem;
+  color: var(--white);
 }
 
 /* GENRES */
@@ -374,6 +375,7 @@ body {
 
 .category-title {
   background: var(--idColor);
+  color: var(--white);
   height: 54px;
   width: 92px;
   border-radius: 8px;
@@ -546,6 +548,7 @@ body {
   display: flex;
   justify-content: space-evenly;
   border-bottom: 1px solid var(--secondary-text);
+  align-items: center;
 }
 
 .show-info {
@@ -556,8 +559,14 @@ body {
 
 .show-info div {
   font-size: var(--content-size);
-  color: var(--secondary-text);
+  color: var(--main-text);
   margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.show-info h5 {
+  color: var(--half-orc);
 }
 
 .show-info div:nth-child(4) {
@@ -565,19 +574,46 @@ body {
 }
 
 .show-genres {
-  padding: 16px;
+  padding: 0 16px;
+  display: flex;
+  gap: 12px;
+  overflow: scroll;
+  overflow-y: hidden;
+}
+
+.show-genres-main .list-title {
+  padding: 16px 0 0 16px;
+}
+
+.show-network-logo {
+  filter: brightness(0) invert(1);
+  width: 64px;
 }
 
 .show-category {
   height: 40px;
 }
 
-.related-container {
-  padding: 16px;
+.related-container .recommendations {
+  padding: 0 16px;
+}
+
+.related-container h5 {
+  margin-bottom: 8px;
 }
 
 .related-img {
   height: 140px;
+}
+
+.next-container {
+  border-top: 1px solid var(--secondary-text);
+  margin-top: 16px;
+  padding: 16px;
+}
+
+.recommendations{
+  margin-top: 8px;
 }
 
 /* GENRES SECTION CATALOGUE */
@@ -588,6 +624,7 @@ body {
   justify-content: center;
   align-items: center;
   background: var(--idColor);
+  color: var(--white);
 }
 
 .catalogue__List {

@@ -58,6 +58,26 @@ const popularAllList = $("#popularAll .catalogue__List")
 const genreMovieList = $("#genres .genres-list")
 const genreList = $("#genre-search .catalogue__List")
 
+const similarList = $(".related-container .related-scrollContainer")
+const recomendList = $(".recommendations .related-scrollContainer")
+const castList = $("#show-cast .people-List")
+
 //Elements ----------------------------------------
 const genreTitles = $(".catalogue-title")
 const searchInput = $(".group .input")
+
+//elements-showdetail------------------
+
+const showPortrait = $(".show-Portrait .detail-img")
+const showTitle = $(".show-Portrait__info .show-Detail-title")
+const showDate = $(".show-Portrait__info .released-date")
+const showGenre = $(".show-Description .show-Genre")
+const showResume = $(".show-Description .show-Detail-description")
+const showScore = $(".show-data .show-Detail-score")
+const showNetwork = $(".show-data .show-Detail-score")
+const showLength = $(".show-data .show-length")
+const showDirector = $(".show-info .show-director")
+const showOTitle = $(".show-info .show-original-title")
+const showCompanies = $(".show-info .show-companies")
+const showRelatedGenres = $("#show-description .show-genres")
+const showNetworkLogo = $(".show-network .show-network-logo")

@@ -23,6 +23,10 @@ const getAndAppendWithIndex = async (
       const itemContainer = document.createElement("div");
       itemContainer.classList.add(parentContainer);
 
+      itemContainer.addEventListener("click", () => {
+        location.hash = `#movie=${show.id}-${show.media_type}`;
+      });
+
       const itemImg = document.createElement("img");
       itemImg.classList.add("item-img");
 
@@ -68,11 +72,13 @@ const getTrendingMovies = () => {
   );
 };
 
-const getTrendingPeople = async () => {
+const appendPeople = async (path, section, castOrResult) => {
   try {
-    const { data } = await api("/trending/person/day");
-    const person = data.results;
-    trendingPeopleList.innerHTML = "";
+    const { data } = await api(path);
+    let person = "";
+    
+    castOrResult === "result" ? (person = data.results) : (person = data.cast);
+    section.innerHTML = "";
     person.forEach((person) => {
       const peopleContainer = document.createElement("div");
       peopleContainer.classList.add("people-container");
@@ -85,7 +91,7 @@ const getTrendingPeople = async () => {
           "src",
           `https://i.postimg.cc/Y0N3p6pR/pngwing-com-10.png`
         );
-      }else{
+      } else {
         personImg.setAttribute(
           "src",
           `https://image.tmdb.org/t/p/w185${person.profile_path}`
@@ -98,11 +104,15 @@ const getTrendingPeople = async () => {
 
       peopleContainer.appendChild(personSpan);
       peopleContainer.appendChild(personImg);
-      trendingPeopleList.appendChild(peopleContainer);
+      section.appendChild(peopleContainer);
     });
   } catch (err) {
     console.error(err);
   }
+};
+
+const getTrendingPeople = async () => {
+  appendPeople("/trending/person/day", trendingPeopleList, "result");
 };
 
 //GENRES----------------------------------
@@ -206,19 +216,26 @@ const getAndAppend = async (
     const { data } = await api(path, optionalConfig);
     const generic = data.results;
     section.innerHTML = "";
+
     generic.forEach((show) => {
       const genericContainer = document.createElement("div");
       genericContainer.classList.add(`${parentContainer}-container`);
 
+      genericContainer.addEventListener("click", () => {
+        show.name === undefined
+          ? (location.hash = `#movie=${show.id}-movie`)
+          : (location.hash = `#movie=${show.id}-tv`);
+      });
+
       const genericImg = document.createElement("img");
       genericImg.classList.add(`${parentContainer}-img`);
 
-      if(show.name === undefined){
+      if (show.name === undefined) {
         genericImg.setAttribute("alt", show.title);
-      }else if (show.title === undefined){
-        genericImg.setAttribute("alt", show.name)
+      } else if (show.title === undefined) {
+        genericImg.setAttribute("alt", show.name);
       }
-  
+
       if (show.media_type === "person") {
         if (show.profile_path === null) {
           genericImg.setAttribute(
@@ -302,3 +319,116 @@ const getItemBySearch = (query) => {
     params: { query },
   });
 };
+
+const getMovieById = async (id) => {
+  const { data: movie } = await api(`/movie/${id}`);
+  console.log(id);
+  showDirector.innerHTML = "";
+  showCompanies.innerHTML = "";
+  showNetworkLogo.removeAttribute("src");
+
+  showPortrait.setAttribute(
+    "src",
+    `https://image.tmdb.org/t/p/w780${movie.backdrop_path}`
+  );
+  showTitle.textContent = movie.title;
+  showDate.textContent = movie.release_date;
+  showGenre.textContent = movie.genres[0].name;
+  showResume.textContent = movie.overview;
+  showScore.textContent = `${movie.vote_average}✨`;
+
+  showLength.textContent = `${movie.runtime}m`;
+  //directos--credits
+  showOTitle.textContent = movie.original_title;
+
+  const h5companies = document.createElement("h5");
+  h5companies.textContent = "Production Companies";
+  showCompanies.appendChild(h5companies);
+
+  movie.production_companies.forEach((item) => {
+    const span = document.createElement("span");
+    span.textContent = item.name;
+    showCompanies.appendChild(span);
+  });
+
+  getCastMovie(id);
+  getGenres(`/movie/${id}`, ".genres-list", showRelatedGenres);
+  getSimilarMovies(id);
+  getRecommendedMovies(id);
+};
+
+const getTvById = async (id) => {
+  const { data: tv } = await api(`/tv/${id}`);
+  console.log(id);
+  showDirector.innerHTML = "";
+  showCompanies.innerHTML = "";
+
+  showPortrait.setAttribute(
+    "src",
+    `https://image.tmdb.org/t/p/w780${tv.backdrop_path}`
+  );
+  showTitle.textContent = tv.name;
+  showDate.textContent = tv.first_air_date;
+  showGenre.textContent = tv.genres[0].name;
+  showResume.textContent = tv.overview;
+  showScore.textContent = `${tv.vote_average}✨`;
+  showNetworkLogo.setAttribute(
+    "src",
+    `https://image.tmdb.org/t/p/w92${tv.networks[0].logo_path}`
+  );
+  showLength.textContent = `${tv.episode_run_time[0]}m`;
+
+  const h5 = document.createElement("h5");
+  h5.classList.add(".info-creator");
+  h5.textContent = "Creators";
+
+  showDirector.append(h5);
+
+  tv.created_by.forEach((item) => {
+    const span = document.createElement("span");
+    span.textContent = item.name;
+    showDirector.appendChild(span);
+  });
+
+  showOTitle.textContent = tv.original_name;
+
+  const h5companies = document.createElement("h5");
+  h5companies.textContent = "Production Companies";
+  showCompanies.appendChild(h5companies);
+
+  tv.production_companies.forEach((item) => {
+    const span = document.createElement("span");
+    span.textContent = item.name;
+    showCompanies.appendChild(span);
+  });
+
+  getCastTv(id);
+  getGenres(`/tv/${id}`, ".genres-list", showRelatedGenres);
+  getSimilarTv(id);
+  getRecommendedTv(id);
+};
+
+const getSimilarMovies = async (id) => {
+  getAndAppend(`/movie/${id}/similar`, "related", similarList);
+};
+
+const getRecommendedMovies = async (id) => {
+  getAndAppend(`/movie/${id}/recommendations`, "related", recomendList);
+};
+
+const getSimilarTv = async (id) => {
+  getAndAppend(`/tv/${id}/similar`, "related", similarList);
+};
+
+const getRecommendedTv = async (id) => {
+  getAndAppend(`/tv/${id}/recommendations`, "related", recomendList);
+};
+
+const getCastMovie = async (id) => {
+  appendPeople(`/movie/${id}/credits`, castList, "cast");
+};
+
+const getCastTv = async (id) => {
+  appendPeople(`/tv/${id}/credits`, castList, "cast");
+};
+
