@@ -249,6 +249,7 @@ function categoriesPage() {
   type == "movie"
     ? getProductByCategoryMovie(categoryId)
     : getProductByCategoryTv(categoryId);
+
 }
 
 //SEARCH LISTENER ----------------------------------------

@@ -8,6 +8,18 @@ const api = axios.create({
   },
 });
 
+// UTILS
+
+//no option after callback because i'm aiming for the whole document
+const lazyLoader = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      const url = entry.target.getAttribute("data-img");
+      entry.target.setAttribute("src", url);
+    }
+  });
+});
+
 const getAndAppendWithIndex = async (
   path,
   parentContainer,
@@ -35,9 +47,12 @@ const getAndAppendWithIndex = async (
         : itemImg.setAttribute("alt", show.title);
 
       itemImg.setAttribute(
-        "src",
+        "data-img",
         `https://image.tmdb.org/t/p/w300${show.poster_path}`
       );
+
+      //escucha mi objeto
+      lazyLoader.observe(itemImg);
 
       const itemSpan = document.createElement("span");
       itemSpan.classList.add("item-number");
@@ -76,7 +91,7 @@ const appendPeople = async (path, section, castOrResult) => {
   try {
     const { data } = await api(path);
     let person = "";
-    
+
     castOrResult === "result" ? (person = data.results) : (person = data.cast);
     section.innerHTML = "";
     person.forEach((person) => {
@@ -87,16 +102,15 @@ const appendPeople = async (path, section, castOrResult) => {
       personImg.classList.add("people-img");
       personImg.setAttribute("alt", person.name);
       if (person.profile_path === null) {
-        personImg.setAttribute(
-          "src",
-          `https://i.postimg.cc/Y0N3p6pR/pngwing-com-10.png`
-        );
+        peopleContainer.classList.add("missing-person");
       } else {
         personImg.setAttribute(
-          "src",
+          "data-img",
           `https://image.tmdb.org/t/p/w185${person.profile_path}`
         );
       }
+
+      lazyLoader.observe(personImg);
 
       const personSpan = document.createElement("span");
       personSpan.classList.add("people-name");
@@ -133,6 +147,7 @@ const getGenres = async (path, parentContainer, section, type) => {
         "click",
         () => (location.hash = `#category=${genre.id}-${genre.name}-${type}`)
       );
+
       genreName.textContent = genre.name;
 
       genreContainer.appendChild(genreName);
@@ -150,6 +165,8 @@ const getGenresMovies = () => {
 const getGenresTv = () => {
   getGenres("/genre/tv/list", "category-container", genreMovieList, "tv");
 };
+
+// TOGGLE GENRES BUTTONS
 
 const bringTv = () => {
   const genreContainer = document.querySelector(".genres-list");
@@ -177,6 +194,8 @@ const bringMovie = () => {
   getGenresMovies();
 };
 
+
+
 const getNetworksImg = async () => {
   try {
     const networksId = [213, 1024, 49, 2739, 2552, 453, 303, 67];
@@ -191,9 +210,11 @@ const getNetworksImg = async () => {
       networkImg.classList.add("network-img");
       networkImg.setAttribute("alt", data.name);
       networkImg.setAttribute(
-        "src",
+        "data-img",
         `https://image.tmdb.org/t/p/w92${data.logo_path}`
       );
+
+      lazyLoader.observe(networkImg);
 
       networkContainer.appendChild(networkImg);
       networksList.appendChild(networkContainer);
@@ -230,27 +251,26 @@ const getAndAppend = async (
       const genericImg = document.createElement("img");
       genericImg.classList.add(`${parentContainer}-img`);
 
+      //checks if it is an actor or a show to set alt
       if (show.name === undefined) {
         genericImg.setAttribute("alt", show.title);
       } else if (show.title === undefined) {
         genericImg.setAttribute("alt", show.name);
       }
 
+      //checks if it is an actor or a show to set the img
       if (show.media_type === "person") {
         if (show.profile_path === null) {
-          genericImg.setAttribute(
-            "src",
-            `https://i.postimg.cc/Y0N3p6pR/pngwing-com-10.png`
-          );
+          genericContainer.classList.add("missing-data");
         } else {
           genericImg.setAttribute(
-            "src",
+            "data-img",
             `https://image.tmdb.org/t/p/w185${show.profile_path}`
           );
+          genericContainer.classList.add(
+            `${parentContainer}-container__gradient`
+          );
         }
-        genericContainer.classList.add(
-          `${parentContainer}-container__gradient`
-        );
 
         const personSpan = document.createElement("span");
         personSpan.classList.add("people-name");
@@ -258,17 +278,16 @@ const getAndAppend = async (
         genericContainer.appendChild(personSpan);
       } else {
         if (show.poster_path === null) {
-          genericImg.setAttribute(
-            "src",
-            `https://i.postimg.cc/0jGLLKhR/pngwing-com-13.png`
-          );
+          genericContainer.classList.add("missing-data");
         } else {
           genericImg.setAttribute(
-            "src",
+            "data-img",
             `https://image.tmdb.org/t/p/w300${show.poster_path}`
           );
         }
       }
+
+      lazyLoader.observe(genericImg);
 
       genericContainer.appendChild(genericImg);
       section.appendChild(genericContainer);
@@ -322,7 +341,6 @@ const getItemBySearch = (query) => {
 
 const getMovieById = async (id) => {
   const { data: movie } = await api(`/movie/${id}`);
-  console.log(id);
   showDirector.innerHTML = "";
   showCompanies.innerHTML = "";
   showNetworkLogo.removeAttribute("src");
@@ -431,4 +449,3 @@ const getCastMovie = async (id) => {
 const getCastTv = async (id) => {
   appendPeople(`/tv/${id}/credits`, castList, "cast");
 };
-
