@@ -194,8 +194,6 @@ const bringMovie = () => {
   getGenresMovies();
 };
 
-
-
 const getNetworksImg = async () => {
   try {
     const networksId = [213, 1024, 49, 2739, 2552, 453, 303, 67];
@@ -226,17 +224,25 @@ const getNetworksImg = async () => {
 
 //MISCELLANEOUS SECTION ---------------------
 
+//page counter
+let page = 1;
+
 const getAndAppend = async (
   path,
   parentContainer,
   section,
   byname,
-  optionalConfig = {}
+  optionalConfig = {},
+  { isInfinite = false, clean = true } = {}
 ) => {
   try {
     const { data } = await api(path, optionalConfig);
     const generic = data.results;
-    section.innerHTML = "";
+    console.log(clean)
+    if (clean) {
+      section.innerHTML = "";
+      page = 1;
+    }
 
     generic.forEach((show) => {
       const genericContainer = document.createElement("div");
@@ -286,12 +292,25 @@ const getAndAppend = async (
           );
         }
       }
-
+      // lazy loading
       lazyLoader.observe(genericImg);
 
       genericContainer.appendChild(genericImg);
       section.appendChild(genericContainer);
     });
+
+    //infinite loading
+
+    if (isInfinite) {
+      page++;
+      const btnLoadMore = document.createElement("button");
+      btnLoadMore.innerHTML = "Load More";
+      section.appendChild(btnLoadMore);
+
+      btnLoadMore.addEventListener("click", () => {
+        getProductByCategoryMovie(false);
+      });
+    }
   } catch (err) {
     console.error(err);
   }
@@ -321,26 +340,65 @@ const getPopularAll = () => {
   getAndAppend("/trending/all/day", "catalogue", popularAllList, "name");
 };
 
-const getProductByCategoryMovie = (id) => {
-  getAndAppend("/discover/movie", "catalogue", genreList, "name", {
-    params: { with_genres: id },
-  });
+// GENRES CATEGORIES
+
+const getProductByCategoryMovie = (clean) => {
+  const [_, categoryData] = location.hash.split("="); // ["#category", "id-name-type"]
+  const [categoryId, categoryName, type] = categoryData.split("-");
+
+  // const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+  // const scrollAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
+
+  // if (scrollAtBottom) {
+    getAndAppend(
+      "/discover/movie",
+      "catalogue",
+      genreList,
+      "name",
+      {
+        params: { with_genres: categoryId, page: page },
+      },
+      { isInfinite: true, clean: clean }
+    );
+  // }
 };
 
-const getProductByCategoryTv = (id) => {
-  getAndAppend("/discover/tv", "catalogue", genreList, "name", {
-    params: { with_genres: id },
-  });
+const getProductByCategoryTv = () => {
+  const [_, categoryData] = location.hash.split("="); // ["#category", "id-name-type"]
+  const [categoryId, categoryName, type] = categoryData.split("-");
+
+  getAndAppend(
+    "/discover/tv",
+    "catalogue",
+    genreList,
+    "name",
+    {
+      params: { with_genres: categoryId },
+    },
+    { isInfinite: true, clean: true }
+  );
 };
 
 const getItemBySearch = (query) => {
-  getAndAppend("/search/multi", "catalogue", popularAllList, "name", {
-    params: { query },
-  });
+  getAndAppend(
+    "/search/multi",
+    "catalogue",
+    popularAllList,
+    "name",
+    {
+      params: { query },
+    },
+    true
+  );
 };
 
-const getMovieById = async (id) => {
-  const { data: movie } = await api(`/movie/${id}`);
+// DETAILED DATA OF THE MOVIE SHOW SELECTED
+
+const getMovieById = async () => {
+  const [_, categoryData] = location.hash.split("="); // ["#category", "id-name-type"]
+  const [categoryId, categoryName, type] = categoryData.split("-");
+
+  const { data: movie } = await api(`/movie/${categoryId}`);
   showDirector.innerHTML = "";
   showCompanies.innerHTML = "";
   showNetworkLogo.removeAttribute("src");
@@ -369,15 +427,18 @@ const getMovieById = async (id) => {
     showCompanies.appendChild(span);
   });
 
-  getCastMovie(id);
-  getGenres(`/movie/${id}`, ".genres-list", showRelatedGenres);
-  getSimilarMovies(id);
-  getRecommendedMovies(id);
+  getCastMovie(categoryId);
+  getGenres(`/movie/${categoryId}`, ".genres-list", showRelatedGenres, "movie");
+  getSimilarMovies(categoryId);
+  getRecommendedMovies(categoryId);
 };
 
-const getTvById = async (id) => {
-  const { data: tv } = await api(`/tv/${id}`);
-  console.log(id);
+// DETAILED DATA OF THE TV SHOW SELECTED
+const getTvById = async () => {
+  const [_, categoryData] = location.hash.split("="); // ["#category", "id-name-type"]
+  const [categoryId, categoryName, type] = categoryData.split("-");
+
+  const { data: tv } = await api(`/tv/${categoryId}`);
   showDirector.innerHTML = "";
   showCompanies.innerHTML = "";
 
@@ -420,12 +481,13 @@ const getTvById = async (id) => {
     showCompanies.appendChild(span);
   });
 
-  getCastTv(id);
-  getGenres(`/tv/${id}`, ".genres-list", showRelatedGenres);
-  getSimilarTv(id);
-  getRecommendedTv(id);
+  getCastTv(categoryId);
+  getGenres(`/tv/${categoryId}`, ".genres-list", showRelatedGenres, "tv");
+  getSimilarTv(categoryId);
+  getRecommendedTv(categoryId);
 };
 
+// DATA OF ITEM SELECTED
 const getSimilarMovies = async (id) => {
   getAndAppend(`/movie/${id}/similar`, "related", similarList);
 };

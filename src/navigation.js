@@ -1,18 +1,24 @@
 //Navbar Listeners ----------------------------
 
-navDiscover.addEventListener("click", () => (location.hash = "#home"));
+navDiscover.addEventListener("click", () => {
+  location.hash = "#home";
+});
 navSearch.addEventListener("click", () => {
   location.hash = "#search=";
 });
-navTrend.addEventListener("click", () => (location.hash = "#trends"));
-navAbout.addEventListener("click", () => (location.hash = "#about"));
+navTrend.addEventListener("click", () => {
+  location.hash = "#trends";
+});
+navAbout.addEventListener("click", () => {
+  location.hash = "#about";
+});
 
 arrowBtn.addEventListener("click", () => {
-    history.back();
+  history.back();
 });
 
 //Trends Listener ----------------------------------------------------------------
-
+//ON WORK---------------------------------
 trendMovies.addEventListener("click", () => (location.hash = "#trends=movies"));
 trendTv.addEventListener("click", () => (location.hash = "#trends=tv"));
 trendMovGen.addEventListener(
@@ -100,6 +106,7 @@ function discover() {
 }
 
 function searchPage() {
+
   arrowBtn.classList.add("inactive");
   headerTitle.classList.remove("inactive");
 
@@ -131,6 +138,7 @@ function searchPage() {
 }
 
 function trendsPage() {
+
   arrowBtn.classList.add("inactive");
   headerTitle.classList.add("inactive");
 
@@ -158,6 +166,7 @@ function trendsPage() {
 }
 
 function aboutPage() {
+
   arrowBtn.classList.add("inactive");
   headerTitle.classList.add("inactive");
 
@@ -210,10 +219,10 @@ function movieShowDetail() {
   const [_, showData] = location.hash.split("="); // ["#movie=", "id-type"]
   const [showId, type] = showData.split("-");
 
-  if(type === "movie") {
-    getMovieById(showId)
-  }else{
-    getTvById(showId)
+  if (type === "movie") {
+    getMovieById(showId);
+  } else {
+    getTvById(showId);
   }
 }
 
@@ -244,12 +253,10 @@ function categoriesPage() {
   const [categoryId, categoryName, type] = categoryData.split("-");
 
   genreTitles.setAttribute("id", `id${categoryId}`);
+  //elimina los %20 que salen para recrear espacios por el URI
   genreTitles.innerHTML = decodeURI(categoryName);
 
-  type == "movie"
-    ? getProductByCategoryMovie(categoryId)
-    : getProductByCategoryTv(categoryId);
-
+  type == "movie" ? getProductByCategoryMovie() : getProductByCategoryTv();
 }
 
 //SEARCH LISTENER ----------------------------------------
