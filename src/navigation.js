@@ -1,5 +1,6 @@
 //page counter
 let page = 1;
+let maxPage;
 let infiniteScroll;
 
 //Navbar Listeners ----------------------------
@@ -149,8 +150,7 @@ function searchPage() {
   const [_, query] = location.hash.split("="); // ["#search", "query"]
   query == "" ? getPopularAll() : getItemBySearch(query);
 
-
-  infiniteScroll = query == "" ? getNewPopular : getNewPagesSearch
+  infiniteScroll = query == "" ? getNewPopular : getNewPagesSearch;
 }
 
 function trendsPage() {

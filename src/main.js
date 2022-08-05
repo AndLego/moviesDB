@@ -235,6 +235,7 @@ const getAndAppend = async (
   try {
     const { data } = await api(path, optionalConfig);
     const generic = data.results;
+    maxPage = data.total_pages;
 
     if (clean) {
       section.innerHTML = "";
@@ -346,14 +347,17 @@ const getPopularAll = () => {
 
 let currentQuery;
 
+//para evitar usar doble funcion para evitar enviar parametros desde el navigation.js podemos usar closures. Ej: getProductByCategoryMovie(id){ return async function(){...code..}}
+
 const getNewPagesMovies = () => {
   const [_, categoryData] = location.hash.split("="); // ["#category", "id-name-type"]
   const [categoryId, categoryName, type] = categoryData.split("-");
-  console.log("soy movie");
+
   const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
   const scrollAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
+  const limitPages = page < maxPage;
 
-  if (scrollAtBottom) {
+  if (scrollAtBottom && limitPages) {
     page++;
     getAndAppend(
       "/discover/movie",
@@ -371,11 +375,12 @@ const getNewPagesMovies = () => {
 const getNewPagesTv = () => {
   const [_, categoryData] = location.hash.split("="); // ["#category", "id-name-type"]
   const [categoryId, categoryName, type] = categoryData.split("-");
-  console.log("soy tv");
+
   const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
   const scrollAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
+  const limitPages = page < maxPage;
 
-  if (scrollAtBottom) {
+  if (scrollAtBottom && limitPages) {
     page++;
     getAndAppend(
       "/discover/tv",
@@ -393,8 +398,9 @@ const getNewPagesTv = () => {
 const getNewPagesSearch = () => {
   const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
   const scrollAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
+  const limitPages = page < maxPage;
 
-  if (scrollAtBottom) {
+  if (scrollAtBottom && limitPages) {
     page++;
 
     getAndAppend(
@@ -413,9 +419,10 @@ const getNewPagesSearch = () => {
 const getNewPopular = () => {
   const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
   const scrollAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
+  const limitPages = page < maxPage;
 
   page++;
-  if (scrollAtBottom) {
+  if (scrollAtBottom && limitPages) {
     getAndAppend(
       "/trending/all/day",
       "catalogue",
