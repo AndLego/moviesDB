@@ -224,9 +224,6 @@ const getNetworksImg = async () => {
 
 //MISCELLANEOUS SECTION ---------------------
 
-//page counter
-let page = 1;
-
 const getAndAppend = async (
   path,
   parentContainer,
@@ -238,7 +235,7 @@ const getAndAppend = async (
   try {
     const { data } = await api(path, optionalConfig);
     const generic = data.results;
-    console.log(clean)
+
     if (clean) {
       section.innerHTML = "";
       page = 1;
@@ -301,16 +298,12 @@ const getAndAppend = async (
 
     //infinite loading
 
-    if (isInfinite) {
-      page++;
-      const btnLoadMore = document.createElement("button");
-      btnLoadMore.innerHTML = "Load More";
-      section.appendChild(btnLoadMore);
+    // if (isInfinite) {
+    // const btnLoadMore = document.createElement("button");
+    // btnLoadMore.innerHTML = "Load More";
+    // section.appendChild(btnLoadMore);
 
-      btnLoadMore.addEventListener("click", () => {
-        getProductByCategoryMovie(false);
-      });
-    }
+    // }
   } catch (err) {
     console.error(err);
   }
@@ -337,19 +330,31 @@ const getTopMovies = () => {
 };
 
 const getPopularAll = () => {
-  getAndAppend("/trending/all/day", "catalogue", popularAllList, "name");
+  getAndAppend(
+    "/trending/all/day",
+    "catalogue",
+    popularAllList,
+    "name",
+    {
+      params: { page: page },
+    },
+    { isInfinite: true, clean: true }
+  );
 };
 
-// GENRES CATEGORIES
+// GET INFINITE ITEMS
 
-const getProductByCategoryMovie = (clean) => {
+let currentQuery;
+
+const getNewPagesMovies = () => {
   const [_, categoryData] = location.hash.split("="); // ["#category", "id-name-type"]
   const [categoryId, categoryName, type] = categoryData.split("-");
+  console.log("soy movie");
+  const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+  const scrollAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
 
-  // const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
-  // const scrollAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
-
-  // if (scrollAtBottom) {
+  if (scrollAtBottom) {
+    page++;
     getAndAppend(
       "/discover/movie",
       "catalogue",
@@ -358,9 +363,88 @@ const getProductByCategoryMovie = (clean) => {
       {
         params: { with_genres: categoryId, page: page },
       },
-      { isInfinite: true, clean: clean }
+      { isInfinite: true, clean: false }
     );
-  // }
+  }
+};
+
+const getNewPagesTv = () => {
+  const [_, categoryData] = location.hash.split("="); // ["#category", "id-name-type"]
+  const [categoryId, categoryName, type] = categoryData.split("-");
+  console.log("soy tv");
+  const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+  const scrollAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
+
+  if (scrollAtBottom) {
+    page++;
+    getAndAppend(
+      "/discover/tv",
+      "catalogue",
+      genreList,
+      "name",
+      {
+        params: { with_genres: categoryId, page: page },
+      },
+      { isInfinite: true, clean: false }
+    );
+  }
+};
+
+const getNewPagesSearch = () => {
+  const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+  const scrollAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
+
+  if (scrollAtBottom) {
+    page++;
+
+    getAndAppend(
+      "/search/multi",
+      "catalogue",
+      popularAllList,
+      "name",
+      {
+        params: { query: currentQuery, page: page },
+      },
+      { isInfinite: true, clean: false }
+    );
+  }
+};
+
+const getNewPopular = () => {
+  const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+  const scrollAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
+
+  page++;
+  if (scrollAtBottom) {
+    getAndAppend(
+      "/trending/all/day",
+      "catalogue",
+      popularAllList,
+      "name",
+      {
+        params: { page: page },
+      },
+      { isInfinite: true, clean: false }
+    );
+  }
+};
+
+// GENRES CATEGORIES
+
+const getProductByCategoryMovie = () => {
+  const [_, categoryData] = location.hash.split("="); // ["#category", "id-name-type"]
+  const [categoryId, categoryName, type] = categoryData.split("-");
+
+  getAndAppend(
+    "/discover/movie",
+    "catalogue",
+    genreList,
+    "name",
+    {
+      params: { with_genres: categoryId },
+    },
+    { isInfinite: true, clean: true }
+  );
 };
 
 const getProductByCategoryTv = () => {
@@ -380,16 +464,10 @@ const getProductByCategoryTv = () => {
 };
 
 const getItemBySearch = (query) => {
-  getAndAppend(
-    "/search/multi",
-    "catalogue",
-    popularAllList,
-    "name",
-    {
-      params: { query },
-    },
-    true
-  );
+  currentQuery = query;
+  getAndAppend("/search/multi", "catalogue", popularAllList, "name", {
+    params: { query },
+  });
 };
 
 // DETAILED DATA OF THE MOVIE SHOW SELECTED

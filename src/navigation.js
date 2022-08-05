@@ -1,3 +1,7 @@
+//page counter
+let page = 1;
+let infiniteScroll;
+
 //Navbar Listeners ----------------------------
 
 navDiscover.addEventListener("click", () => {
@@ -36,8 +40,14 @@ trendAll.addEventListener("click", () => (location.hash = "#trends=all"));
 
 window.addEventListener("DOMContentLoaded", navigator, false);
 window.addEventListener("hashchange", navigator, false);
+window.addEventListener("scroll", infiniteScroll, false);
 
 function navigator() {
+  if (infiniteScroll) {
+    window.removeEventListener("scroll", infiniteScroll, { passive: false });
+    infiniteScroll = undefined;
+  }
+
   location.hash.startsWith("#home")
     ? discover()
     : location.hash.startsWith("#search=")
@@ -51,6 +61,10 @@ function navigator() {
     : location.hash.startsWith("#category=")
     ? categoriesPage()
     : discover();
+
+  if (infiniteScroll) {
+    window.addEventListener("scroll", infiniteScroll, { passive: false });
+  }
 
   smoothscroll();
 }
@@ -106,7 +120,6 @@ function discover() {
 }
 
 function searchPage() {
-
   arrowBtn.classList.add("inactive");
   headerTitle.classList.remove("inactive");
 
@@ -135,10 +148,12 @@ function searchPage() {
   searching();
   const [_, query] = location.hash.split("="); // ["#search", "query"]
   query == "" ? getPopularAll() : getItemBySearch(query);
+
+
+  infiniteScroll = query == "" ? getNewPopular : getNewPagesSearch
 }
 
 function trendsPage() {
-
   arrowBtn.classList.add("inactive");
   headerTitle.classList.add("inactive");
 
@@ -166,7 +181,6 @@ function trendsPage() {
 }
 
 function aboutPage() {
-
   arrowBtn.classList.add("inactive");
   headerTitle.classList.add("inactive");
 
@@ -257,6 +271,7 @@ function categoriesPage() {
   genreTitles.innerHTML = decodeURI(categoryName);
 
   type == "movie" ? getProductByCategoryMovie() : getProductByCategoryTv();
+  infiniteScroll = type == "movie" ? getNewPagesMovies : getNewPagesTv;
 }
 
 //SEARCH LISTENER ----------------------------------------
@@ -264,6 +279,7 @@ function categoriesPage() {
 function searching() {
   // console.log("hola")
   // event.preventDefault
+
   location.hash = `#search=${searchInput.value.trim()}`;
 }
 
