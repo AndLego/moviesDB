@@ -12,7 +12,7 @@ navSearch.addEventListener("click", () => {
   location.hash = "#search=";
 });
 navTrend.addEventListener("click", () => {
-  location.hash = "#trends";
+  location.hash = "#favorites";
 });
 navAbout.addEventListener("click", () => {
   location.hash = "#about";
@@ -22,20 +22,6 @@ arrowBtn.addEventListener("click", () => {
   history.back();
 });
 
-//Trends Listener ----------------------------------------------------------------
-//ON WORK---------------------------------
-trendMovies.addEventListener("click", () => (location.hash = "#trends=movies"));
-trendTv.addEventListener("click", () => (location.hash = "#trends=tv"));
-trendMovGen.addEventListener(
-  "click",
-  () => (location.hash = "#trends=m-genres")
-);
-trendTvGen.addEventListener(
-  "click",
-  () => (location.hash = "#trends=tv-genres")
-);
-trendPeople.addEventListener("click", () => (location.hash = "#trends=people"));
-trendAll.addEventListener("click", () => (location.hash = "#trends=all"));
 
 //General---------------------------------------------------
 
@@ -53,8 +39,8 @@ function navigator() {
     ? discover()
     : location.hash.startsWith("#search=")
     ? searchPage()
-    : location.hash.startsWith("#trends")
-    ? trendsPage()
+    : location.hash.startsWith("#favorites")
+    ? favoritesPage()
     : location.hash.startsWith("#about")
     ? aboutPage()
     : location.hash.startsWith("#movie=")
@@ -86,7 +72,7 @@ function discover() {
   headerTitle.classList.remove("inactive");
 
   trendingTv.classList.remove("inactive");
-  networks.classList.remove("inactive");
+  favorites.classList.remove("inactive");
   trendingMovies.classList.remove("inactive");
   trendingPeople.classList.remove("inactive");
   genres.classList.remove("inactive");
@@ -108,11 +94,12 @@ function discover() {
   navAbout.classList.remove("currentNav");
 
   getTrendingTv();
+  getFavoriteItems()
   getTrendingMovies();
   getTrendingPeople();
   getGenresMovies(); //generar una funcion que encapsule ambos y usar true/false
   // getGenresTv();
-  getNetworksImg();
+  // getNetworksImg();
   getPopularMovies();
   getPopularTv();
   getUpcomingMovies();
@@ -125,7 +112,7 @@ function searchPage() {
   headerTitle.classList.remove("inactive");
 
   trendingTv.classList.add("inactive");
-  networks.classList.add("inactive");
+  favorites.classList.add("inactive");
   trendingMovies.classList.add("inactive");
   trendingPeople.classList.add("inactive");
   genres.classList.add("inactive");
@@ -153,12 +140,12 @@ function searchPage() {
   infiniteScroll = query == "" ? getNewPopular : getNewPagesSearch;
 }
 
-function trendsPage() {
+function favoritesPage() {
   arrowBtn.classList.add("inactive");
   headerTitle.classList.add("inactive");
 
   trendingTv.classList.add("inactive");
-  networks.classList.add("inactive");
+  favorites.classList.add("inactive");
   trendingMovies.classList.add("inactive");
   trendingPeople.classList.add("inactive");
   genres.classList.add("inactive");
@@ -185,7 +172,7 @@ function aboutPage() {
   headerTitle.classList.add("inactive");
 
   trendingTv.classList.add("inactive");
-  networks.classList.add("inactive");
+  favorites.classList.add("inactive");
   trendingMovies.classList.add("inactive");
   trendingPeople.classList.add("inactive");
   genres.classList.add("inactive");
@@ -214,7 +201,7 @@ function movieShowDetail() {
   headerTitle.classList.add("inactive");
 
   trendingTv.classList.add("inactive");
-  networks.classList.add("inactive");
+  favorites.classList.add("inactive");
   trendingMovies.classList.add("inactive");
   trendingPeople.classList.add("inactive");
   genres.classList.add("inactive");
@@ -247,7 +234,7 @@ function categoriesPage() {
   headerTitle.classList.add("inactive");
 
   trendingTv.classList.add("inactive");
-  networks.classList.add("inactive");
+  favorites.classList.add("inactive");
   trendingMovies.classList.add("inactive");
   trendingPeople.classList.add("inactive");
   genres.classList.add("inactive");

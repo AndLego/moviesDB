@@ -11,7 +11,7 @@ const headerTitle = $(".header-title");
 //Sections -----------------------------------------------------------
 
 const trendingTv = $("#trendingTv");
-const networks = $("#networks");
+const favorites = $("#favorites");
 const trendingMovies = $("#trendingMovies");
 const trendingPeople = $("#trendingPeople");
 const genres = $("#genres");
@@ -47,7 +47,7 @@ const trendAll = $(".trend-all")
 const trendingTvList = $("#trendingTv .trendingTv-List")
 const trendingMovieList = $("#trendingMovies .trendingMovies-List")
 const trendingPeopleList = $("#trendingPeople .people-List")
-const networksList =  $("#networks .networks-List")
+const favoritesList =  $("#favorites .favorites-List")
 const popularMovieList = $("#popularMovies-list .generic-List")
 const popularTvList = $("#popularTv-list .generic-List")
 const upcomingMoviesList = $("#upcomingMovies .generic-List")
@@ -61,6 +61,8 @@ const genreList = $("#genre-search .catalogue__List")
 const similarList = $(".related-container .related-scrollContainer")
 const recomendList = $(".recommendations .related-scrollContainer")
 const castList = $("#show-cast .people-List")
+
+const favList = $("#favorites .favorites-List")
 
 //Elements ----------------------------------------
 const genreTitles = $(".catalogue-title")

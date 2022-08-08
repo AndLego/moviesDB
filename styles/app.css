@@ -258,6 +258,14 @@ body {
   animation: loading-skeleton infinite 1.5s;
 }
 
+.favorites-container--loading {
+  background-color: var(--secondary-text);
+  width: 100px;
+  height: 150px;
+  border-radius: 50%;
+  animation: loading-skeleton infinite 1.5s;
+}
+
 .tv-container--loading,
 .movie-container--loading {
   height: 225px;
@@ -331,6 +339,12 @@ body {
   position: relative;
 }
 
+.tv-container:hover .like-btn,
+.movie-container:hover .like-btn,
+.generic-container:hover .like-btn {
+  opacity: 1;
+}
+
 .item-number {
   position: absolute;
   left: 0px;
@@ -351,7 +365,7 @@ body {
 
 .trendingMovies-List,
 .trendingTv-List,
-.networks-List,
+.favorites-List,
 .people-List,
 .genres-list,
 .generic-List,
@@ -360,10 +374,50 @@ body {
   gap: 12px;
   overflow: scroll;
   overflow-y: hidden;
-  padding-bottom: 8px;
+  padding-bottom: 12px;
 }
 
-/* Network */
+/* FAVORITES */
+
+.like-btn {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  color: red;
+  font-size: 2rem;
+  background: rgba(19, 19, 19, 0.6);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom-left-radius: 4px;
+  border: none;
+  opacity: 0;
+  transition: opacity 0.35 ease;
+  cursor: pointer;
+}
+
+.delete-favorite {
+  color: var(--half-orc);
+}
+
+.favorite-title {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 4rem;
+}
+
+.favorites-container {
+  width: 100px;
+  height: 150px;
+  cursor: pointer;
+}
+
+.favorites-container .favorite-img {
+  height: 100%;
+  border-radius: 50%;
+}
 
 .network-container {
   background: var(--almost-back);
@@ -424,6 +478,7 @@ body {
 
 #genres {
   height: 115px;
+  margin-bottom: 12px;
 }
 
 .genres-movie,
@@ -558,6 +613,11 @@ body {
   width: 94px;
 }
 
+.generic-container,
+.related-container {
+  position: relative;
+}
+
 /* Detail section */
 
 .header-arrow {
@@ -658,7 +718,7 @@ body {
 }
 
 .show-genres {
-  padding: 0 16px;
+  padding: 8px 16px;
   display: flex;
   gap: 12px;
   overflow: scroll;

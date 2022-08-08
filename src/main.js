@@ -1,3 +1,5 @@
+// DATA
+
 const api = axios.create({
   baseURL: "https://api.themoviedb.org/3",
   headers: {
@@ -7,6 +9,31 @@ const api = axios.create({
     api_key: API_KEY,
   },
 });
+
+const likedItemList = () => {
+  const item = JSON.parse(localStorage.getItem("liked_items"));
+  let items;
+
+  item ? (items = item) : (items = {});
+
+  return items;
+};
+
+const likeItem = (item) => {
+  const likedItems = likedItemList();
+
+  console.log(likedItems);
+
+  if (likedItems[item.id]) {
+    likedItems[item.id] = undefined;
+    // localStorage.removeItem('item')
+  } else {
+    likedItems[item.id] = item;
+    // localStorage.setItem(item.id, )
+  }
+
+  localStorage.setItem("liked_items", JSON.stringify(likedItems));
+};
 
 // UTILS
 
@@ -35,13 +62,13 @@ const getAndAppendWithIndex = async (
       const itemContainer = document.createElement("div");
       itemContainer.classList.add(parentContainer);
 
-      itemContainer.addEventListener("click", () => {
+      const itemImg = document.createElement("img");
+      itemImg.classList.add("item-img");
+      itemImg.addEventListener("click", () => {
         location.hash = `#movie=${show.id}-${show.media_type}`;
       });
 
-      const itemImg = document.createElement("img");
-      itemImg.classList.add("item-img");
-
+      //tv and movies have a different API request for the name
       byname == "name"
         ? itemImg.setAttribute("alt", show.name)
         : itemImg.setAttribute("alt", show.title);
@@ -49,6 +76,7 @@ const getAndAppendWithIndex = async (
       itemImg.setAttribute(
         "data-img",
         `https://image.tmdb.org/t/p/w300${show.poster_path}`
+        // para favorites `https://image.tmdb.org/t/p/w185${show.poster_path}`
       );
 
       //escucha mi objeto
@@ -58,8 +86,15 @@ const getAndAppendWithIndex = async (
       itemSpan.classList.add("item-number");
       itemSpan.textContent = index + 1;
 
-      itemContainer.appendChild(itemSpan);
-      itemContainer.appendChild(itemImg);
+      const likeBtn = document.createElement("button");
+      likeBtn.classList.add("like-btn");
+      likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i>`;
+      likeBtn.addEventListener("click", () => {
+        likeBtn.classList.toggle("delete-favorite");
+        likeItem(show);
+      });
+
+      itemContainer.append(itemSpan, itemImg, likeBtn);
       section.appendChild(itemContainer);
     });
   } catch (err) {
@@ -194,33 +229,33 @@ const bringMovie = () => {
   getGenresMovies();
 };
 
-const getNetworksImg = async () => {
-  try {
-    const networksId = [213, 1024, 49, 2739, 2552, 453, 303, 67];
-    networksList.innerHTML = "";
-    networksId.forEach(async (item) => {
-      const { data } = await api(`/network/${item}`);
+// const getNetworksImg = async () => {
+//   try {
+//     const networksId = [213, 1024, 49, 2739, 2552, 453, 303, 67];
+//     favoritesList.innerHTML = "";
+//     networksId.forEach(async (item) => {
+//       const { data } = await api(`/network/${item}`);
 
-      const networkContainer = document.createElement("div");
-      networkContainer.classList.add("network-container");
+//       const networkContainer = document.createElement("div");
+//       networkContainer.classList.add("network-container");
 
-      const networkImg = document.createElement("img");
-      networkImg.classList.add("network-img");
-      networkImg.setAttribute("alt", data.name);
-      networkImg.setAttribute(
-        "data-img",
-        `https://image.tmdb.org/t/p/w92${data.logo_path}`
-      );
+//       const networkImg = document.createElement("img");
+//       networkImg.classList.add("network-img");
+//       networkImg.setAttribute("alt", data.name);
+//       networkImg.setAttribute(
+//         "data-img",
+//         `https://image.tmdb.org/t/p/w92${data.logo_path}`
+//       );
 
-      lazyLoader.observe(networkImg);
+//       lazyLoader.observe(networkImg);
 
-      networkContainer.appendChild(networkImg);
-      networksList.appendChild(networkContainer);
-    });
-  } catch (err) {
-    console.error(err);
-  }
-};
+//       networkContainer.appendChild(networkImg);
+//       favoritesList.appendChild(networkContainer);
+//     });
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };
 
 //MISCELLANEOUS SECTION ---------------------
 
@@ -246,14 +281,13 @@ const getAndAppend = async (
       const genericContainer = document.createElement("div");
       genericContainer.classList.add(`${parentContainer}-container`);
 
-      genericContainer.addEventListener("click", () => {
+      const genericImg = document.createElement("img");
+      genericImg.classList.add(`${parentContainer}-img`);
+      genericImg.addEventListener("click", () => {
         show.name === undefined
           ? (location.hash = `#movie=${show.id}-movie`)
           : (location.hash = `#movie=${show.id}-tv`);
       });
-
-      const genericImg = document.createElement("img");
-      genericImg.classList.add(`${parentContainer}-img`);
 
       //checks if it is an actor or a show to set alt
       if (show.name === undefined) {
@@ -293,18 +327,17 @@ const getAndAppend = async (
       // lazy loading
       lazyLoader.observe(genericImg);
 
-      genericContainer.appendChild(genericImg);
+      const likeBtn = document.createElement("button");
+      likeBtn.classList.add("like-btn");
+      likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i>`;
+      likeBtn.addEventListener("click", () => {
+        likeBtn.classList.toggle("delete-favorite");
+        likeItem(show);
+      });
+
+      genericContainer.append(genericImg, likeBtn);
       section.appendChild(genericContainer);
     });
-
-    //infinite loading
-
-    // if (isInfinite) {
-    // const btnLoadMore = document.createElement("button");
-    // btnLoadMore.innerHTML = "Load More";
-    // section.appendChild(btnLoadMore);
-
-    // }
   } catch (err) {
     console.error(err);
   }
@@ -595,4 +628,56 @@ const getCastMovie = async (id) => {
 
 const getCastTv = async (id) => {
   appendPeople(`/tv/${id}/credits`, castList, "cast");
+};
+
+// FAVORITES CODE
+
+const getFavoriteItems = () => {
+  const likedItems = likedItemList();
+  const itemsArr = Object.values(likedItems);
+
+  favList.innerHTML = "";
+
+  if (itemsArr === []) {
+    console.log("toyvacio");
+    ///pendiente
+  } else {
+    itemsArr.forEach((show) => {
+      const genericContainer = document.createElement("div");
+      genericContainer.classList.add(`favorites-container`);
+
+      const genericImg = document.createElement("img");
+      genericImg.classList.add(`favorite-img`);
+      genericImg.addEventListener("click", () => {
+        show.name === undefined
+          ? (location.hash = `#movie=${show.id}-movie`)
+          : (location.hash = `#movie=${show.id}-tv`);
+      });
+
+      if (show.poster_path === null) {
+        genericContainer.classList.add("missing-data");
+      } else {
+        genericImg.setAttribute(
+          "data-img",
+          `https://image.tmdb.org/t/p/w185${show.poster_path}`
+        );
+      }
+
+      // lazy loading
+      lazyLoader.observe(genericImg);
+
+      const likeBtn = document.createElement("button");
+      likeBtn.classList.add("like-btn");
+      likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i>`;
+      likeBtn.addEventListener("click", () => {
+        likeBtn.classList.toggle("delete-favorite");
+        likeItem(show);
+      });
+
+      genericContainer.append(genericImg, likeBtn);
+      favList.appendChild(genericContainer);
+    });
+  }
+
+  console.log(itemsArr);
 };
