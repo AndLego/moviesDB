@@ -19,11 +19,13 @@ const likedItemList = () => {
   return items;
 };
 
+/**
+ * It takes an item as an argument, and then it either adds it to the liked items list or removes it
+ * from the liked items list
+ * @param item - The item to be liked or unliked.
+ */
 const likeItem = (item) => {
   const likedItems = likedItemList();
-
-  console.log(likedItems);
-
   if (likedItems[item.id]) {
     likedItems[item.id] = undefined;
     // localStorage.removeItem('item')
@@ -31,7 +33,6 @@ const likeItem = (item) => {
     likedItems[item.id] = item;
     // localStorage.setItem(item.id, )
   }
-
   localStorage.setItem("liked_items", JSON.stringify(likedItems));
 };
 
@@ -47,6 +48,18 @@ const lazyLoader = new IntersectionObserver((entries) => {
   });
 });
 
+/**
+ * It takes in a path, a parent container, a section, and a byname parameter, and then it uses the path
+ * to make an API request, and then it uses the parent container, section, and byname parameters to
+ * create a div, an image, a span, and a button, and then it appends the div, image, span, and button
+ * to the section
+ * @param path - the path to the API request
+ * @param parentContainer - the class name of the container that will hold the image, the number, and
+ * the like button.
+ * @param section - the section where the items will be appended
+ * @param byname - this is a string that is either "name" or "title" depending on whether the API
+ * request is for a movie or a tv show.
+ */
 const getAndAppendWithIndex = async (
   path,
   parentContainer,
@@ -89,9 +102,13 @@ const getAndAppendWithIndex = async (
       const likeBtn = document.createElement("button");
       likeBtn.classList.add("like-btn");
       likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i>`;
+
+      likedItemList()[show.id] && likeBtn.classList.add("delete-favorite");
+
       likeBtn.addEventListener("click", () => {
         likeBtn.classList.toggle("delete-favorite");
         likeItem(show);
+        getFavoriteItemsMain();
       });
 
       itemContainer.append(itemSpan, itemImg, likeBtn);
@@ -122,6 +139,15 @@ const getTrendingMovies = () => {
   );
 };
 
+/**
+ * It takes in a path, a section, and a string that determines whether to use the data.cast or
+ * data.results property. It then creates a div, an img, and a span element, and appends them to the
+ * section
+ * @param path - the path to the api
+ * @param section - the section where the people will be appended to
+ * @param castOrResult - This is a string that is either "cast" or "result". This is used to determine
+ * whether the data is coming from the cast or the result.
+ */
 const appendPeople = async (path, section, castOrResult) => {
   try {
     const { data } = await api(path);
@@ -137,7 +163,11 @@ const appendPeople = async (path, section, castOrResult) => {
       personImg.classList.add("people-img");
       personImg.setAttribute("alt", person.name);
       if (person.profile_path === null) {
-        peopleContainer.classList.add("missing-person");
+        personImg.classList.add("missing-data");
+        personImg.setAttribute(
+          "data-img",
+          "https://icon-library.com/images/not-found-icon/not-found-icon-6.jpg"
+        );
       } else {
         personImg.setAttribute(
           "data-img",
@@ -166,6 +196,15 @@ const getTrendingPeople = async () => {
 
 //GENRES----------------------------------
 
+/**
+ * It takes in a path, a parent container, a section, and a type, and then it fetches the data from the
+ * API, creates a genre container, creates a genre name, and then appends the genre name to the genre
+ * container, and then appends the genre container to the section
+ * @param path - the path to the API endpoint
+ * @param parentContainer - the class name of the parent container
+ * @param section - the section where the genres will be displayed
+ * @param type - movie or tv
+ */
 const getGenres = async (path, parentContainer, section, type) => {
   try {
     const { data } = await api(path);
@@ -229,36 +268,20 @@ const bringMovie = () => {
   getGenresMovies();
 };
 
-// const getNetworksImg = async () => {
-//   try {
-//     const networksId = [213, 1024, 49, 2739, 2552, 453, 303, 67];
-//     favoritesList.innerHTML = "";
-//     networksId.forEach(async (item) => {
-//       const { data } = await api(`/network/${item}`);
-
-//       const networkContainer = document.createElement("div");
-//       networkContainer.classList.add("network-container");
-
-//       const networkImg = document.createElement("img");
-//       networkImg.classList.add("network-img");
-//       networkImg.setAttribute("alt", data.name);
-//       networkImg.setAttribute(
-//         "data-img",
-//         `https://image.tmdb.org/t/p/w92${data.logo_path}`
-//       );
-
-//       lazyLoader.observe(networkImg);
-
-//       networkContainer.appendChild(networkImg);
-//       favoritesList.appendChild(networkContainer);
-//     });
-//   } catch (err) {
-//     console.error(err);
-//   }
-// };
-
 //MISCELLANEOUS SECTION ---------------------
 
+/**
+ * It takes in a path, a parent container, a section, a byname, an optional config, and an object with
+ * two properties, isInfinite and clean, and returns a promise that resolves to the data from the api
+ * call
+ * @param path - the path to the API
+ * @param parentContainer - the name of the container that will be created
+ * @param section - the section where the results will be appended
+ * @param byname - is a boolean that checks if the search is by name or not.
+ * @param [optionalConfig] - this is an object that can be passed to the function to add more
+ * parameters to the API call.
+ * @param [] - path: the path to the API
+ */
 const getAndAppend = async (
   path,
   parentContainer,
@@ -272,71 +295,96 @@ const getAndAppend = async (
     const generic = data.results;
     maxPage = data.total_pages;
 
+    let showAlt;
+
     if (clean) {
       section.innerHTML = "";
       page = 1;
     }
 
     generic.forEach((show) => {
-      const genericContainer = document.createElement("div");
-      genericContainer.classList.add(`${parentContainer}-container`);
+      if (show.media_type !== "person") {
+        const genericContainer = document.createElement("div");
+        genericContainer.classList.add(`${parentContainer}-container`);
 
-      const genericImg = document.createElement("img");
-      genericImg.classList.add(`${parentContainer}-img`);
-      genericImg.addEventListener("click", () => {
-        show.name === undefined
-          ? (location.hash = `#movie=${show.id}-movie`)
-          : (location.hash = `#movie=${show.id}-tv`);
-      });
-
-      //checks if it is an actor or a show to set alt
-      if (show.name === undefined) {
-        genericImg.setAttribute("alt", show.title);
-      } else if (show.title === undefined) {
-        genericImg.setAttribute("alt", show.name);
-      }
-
-      //checks if it is an actor or a show to set the img
-      if (show.media_type === "person") {
-        if (show.profile_path === null) {
-          genericContainer.classList.add("missing-data");
-        } else {
-          genericImg.setAttribute(
-            "data-img",
-            `https://image.tmdb.org/t/p/w185${show.profile_path}`
-          );
-          genericContainer.classList.add(
-            `${parentContainer}-container__gradient`
-          );
+        const genericImg = document.createElement("img");
+        genericImg.classList.add(`${parentContainer}-img`);
+        genericImg.addEventListener("click", () => {
+          show.name === undefined
+            ? (location.hash = `#movie=${show.id}-movie`)
+            : (location.hash = `#movie=${show.id}-tv`);
+        });
+        //checks if it is an actor or a show to set alt
+        if (show.name === undefined) {
+          genericImg.setAttribute("alt", show.title);
+          showAlt = show.title;
+        } else if (show.title === undefined) {
+          genericImg.setAttribute("alt", show.name);
+          showAlt = show.name;
         }
-
-        const personSpan = document.createElement("span");
-        personSpan.classList.add("people-name");
-        personSpan.textContent = show.name;
-        genericContainer.appendChild(personSpan);
-      } else {
-        if (show.poster_path === null) {
-          genericContainer.classList.add("missing-data");
+        //checks if it is an actor or a show to set the img
+        if (show.media_type === "person") {
+          if (show.profile_path === null) {
+            genericImg.classList.add("missing-data");
+            genericImg.setAttribute(
+              "data-img",
+              "https://icon-library.com/images/not-found-icon/not-found-icon-6.jpg"
+            );
+          } else {
+            genericImg.setAttribute(
+              "data-img",
+              `https://image.tmdb.org/t/p/w185${show.profile_path}`
+            );
+            genericContainer.classList.add(
+              `${parentContainer}-container__gradient`
+            );
+          }
+          const personSpan = document.createElement("span");
+          personSpan.classList.add("people-name");
+          personSpan.textContent = show.name;
+          genericContainer.appendChild(personSpan);
         } else {
-          genericImg.setAttribute(
-            "data-img",
-            `https://image.tmdb.org/t/p/w300${show.poster_path}`
-          );
+          if (show.poster_path === null) {
+            genericImg.setAttribute(
+              "data-img",
+              "https://icon-library.com/images/light-icon-png/light-icon-png-21.jpg"
+            );
+            const foundAlt = document.createElement("span");
+            foundAlt.classList.add("altShowDescription");
+            foundAlt.textContent = showAlt;
+
+            foundAlt.addEventListener("click", () => {
+              show.name === undefined
+                ? (location.hash = `#movie=${show.id}-movie`)
+                : (location.hash = `#movie=${show.id}-tv`);
+            });
+
+            genericContainer.appendChild(foundAlt);
+          } else {
+            genericImg.setAttribute(
+              "data-img",
+              `https://image.tmdb.org/t/p/w300${show.poster_path}`
+            );
+          }
         }
+        // lazy loading
+        lazyLoader.observe(genericImg);
+
+        const likeBtn = document.createElement("button");
+        likeBtn.classList.add("like-btn");
+        likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i>`;
+
+        likedItemList()[show.id] && likeBtn.classList.add("delete-favorite");
+
+        likeBtn.addEventListener("click", () => {
+          likeBtn.classList.toggle("delete-favorite");
+          likeItem(show);
+          getFavoriteItemsMain();
+        });
+
+        genericContainer.append(genericImg, likeBtn);
+        section.appendChild(genericContainer);
       }
-      // lazy loading
-      lazyLoader.observe(genericImg);
-
-      const likeBtn = document.createElement("button");
-      likeBtn.classList.add("like-btn");
-      likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i>`;
-      likeBtn.addEventListener("click", () => {
-        likeBtn.classList.toggle("delete-favorite");
-        likeItem(show);
-      });
-
-      genericContainer.append(genericImg, likeBtn);
-      section.appendChild(genericContainer);
     });
   } catch (err) {
     console.error(err);
@@ -384,7 +432,7 @@ let currentQuery;
 
 const getNewPagesMovies = () => {
   const [_, categoryData] = location.hash.split("="); // ["#category", "id-name-type"]
-  const [categoryId, categoryName, type] = categoryData.split("-");
+  const [categoryId] = categoryData.split("-");
 
   const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
   const scrollAtBottom = scrollTop + clientHeight >= scrollHeight - 15;
@@ -512,6 +560,9 @@ const getItemBySearch = (query) => {
 
 // DETAILED DATA OF THE MOVIE SHOW SELECTED
 
+/**
+ * It gets the movie data from the API and displays it on the page
+ */
 const getMovieById = async () => {
   const [_, categoryData] = location.hash.split("="); // ["#category", "id-name-type"]
   const [categoryId, categoryName, type] = categoryData.split("-");
@@ -521,18 +572,27 @@ const getMovieById = async () => {
   showCompanies.innerHTML = "";
   showNetworkLogo.removeAttribute("src");
 
-  showPortrait.setAttribute(
-    "src",
-    `https://image.tmdb.org/t/p/w780${movie.backdrop_path}`
-  );
+  if (movie.backdrop_path === null) {
+    showPortrait.setAttribute(
+      "src",
+      "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"
+    );
+  } else {
+    showPortrait.setAttribute(
+      "src",
+      `https://image.tmdb.org/t/p/w780${movie.backdrop_path}`
+    );
+  }
   showTitle.textContent = movie.title;
   showDate.textContent = movie.release_date;
-  showGenre.textContent = movie.genres[0].name;
+  movie.genres.length == 0
+    ? (showGenre.textContent = "-")
+    : (showGenre.textContent = movie.genres[0].name);
+
   showResume.textContent = movie.overview;
   showScore.textContent = `${movie.vote_average}✨`;
 
   showLength.textContent = `${movie.runtime}m`;
-  //directos--credits
   showOTitle.textContent = movie.original_title;
 
   const h5companies = document.createElement("h5");
@@ -545,35 +605,56 @@ const getMovieById = async () => {
     showCompanies.appendChild(span);
   });
 
-  getCastMovie(categoryId);
   getGenres(`/movie/${categoryId}`, ".genres-list", showRelatedGenres, "movie");
+  getCastMovie(categoryId);
   getSimilarMovies(categoryId);
   getRecommendedMovies(categoryId);
 };
 
 // DETAILED DATA OF THE TV SHOW SELECTED
+/**
+ * It gets the tv show data from the API and displays it on the page
+ */
 const getTvById = async () => {
   const [_, categoryData] = location.hash.split("="); // ["#category", "id-name-type"]
-  const [categoryId, categoryName, type] = categoryData.split("-");
+  const [categoryId] = categoryData.split("-");
 
   const { data: tv } = await api(`/tv/${categoryId}`);
   showDirector.innerHTML = "";
   showCompanies.innerHTML = "";
 
-  showPortrait.setAttribute(
-    "src",
-    `https://image.tmdb.org/t/p/w780${tv.backdrop_path}`
-  );
+  if (tv.backdrop_path === null) {
+    showPortrait.setAttribute(
+      "src",
+      "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"
+    );
+  } else {
+    showPortrait.setAttribute(
+      "src",
+      `https://image.tmdb.org/t/p/w780${tv.backdrop_path}`
+    );
+  }
   showTitle.textContent = tv.name;
   showDate.textContent = tv.first_air_date;
-  showGenre.textContent = tv.genres[0].name;
-  showResume.textContent = tv.overview;
+  tv.genres.length == 0
+    ? (showGenre.textContent = "-")
+    : (showGenre.textContent = tv.genres[0].name);
+  tv.overview == ""
+    ? (showResume.textContent = "-")
+    : (showResume.textContent = tv.overview);
   showScore.textContent = `${tv.vote_average}✨`;
-  showNetworkLogo.setAttribute(
-    "src",
-    `https://image.tmdb.org/t/p/w92${tv.networks[0].logo_path}`
-  );
-  showLength.textContent = `${tv.episode_run_time[0]}m`;
+
+  if (tv.networks.length == 0) {
+    showNetworkLogo.textContent = "-";
+  } else {
+    showNetworkLogo.setAttribute(
+      "src",
+      `https://image.tmdb.org/t/p/w92${tv.networks[0].logo_path}`
+    );
+  }
+  tv.episode_run_time.length == 0
+    ? (showLength.textContent = "- ")
+    : (showLength.textContent = `${tv.episode_run_time[0]}m`);
 
   const h5 = document.createElement("h5");
   h5.classList.add(".info-creator");
@@ -607,19 +688,19 @@ const getTvById = async () => {
 
 // DATA OF ITEM SELECTED
 const getSimilarMovies = async (id) => {
-  getAndAppend(`/movie/${id}/similar`, "related", similarList);
+  getAndAppend(`/movie/${id}/similar`, "item-related", similarList);
 };
 
 const getRecommendedMovies = async (id) => {
-  getAndAppend(`/movie/${id}/recommendations`, "related", recomendList);
+  getAndAppend(`/movie/${id}/recommendations`, "item-related", recomendList);
 };
 
 const getSimilarTv = async (id) => {
-  getAndAppend(`/tv/${id}/similar`, "related", similarList);
+  getAndAppend(`/tv/${id}/similar`, "item-related", similarList);
 };
 
 const getRecommendedTv = async (id) => {
-  getAndAppend(`/tv/${id}/recommendations`, "related", recomendList);
+  getAndAppend(`/tv/${id}/recommendations`, "item-related", recomendList);
 };
 
 const getCastMovie = async (id) => {
@@ -632,52 +713,96 @@ const getCastTv = async (id) => {
 
 // FAVORITES CODE
 
-const getFavoriteItems = () => {
+/**
+ * It takes in a section, container, and imgSection as arguments and then creates a generic container,
+ * image, and like button for each item in the likedItemList array
+ * @param section - the section where the items will be displayed
+ * @param container - the class name of the container that will hold the image and the like button
+ * @param imgSection - the class name of the image element
+ */
+const getFavoriteItems = (section, container, imgSection) => {
   const likedItems = likedItemList();
   const itemsArr = Object.values(likedItems);
+  let showAlt;
+  section.innerHTML = "";
 
-  favList.innerHTML = "";
-
-  if (itemsArr === []) {
-    console.log("toyvacio");
-    ///pendiente
+  if (itemsArr.length == 0) {
+    const emptyContainer = document.createElement("div");
+    emptyContainer.classList.add(`favorites-empty-container`);
+    emptyContainer.textContent = "You have no favorites";
+    section.appendChild(emptyContainer);
   } else {
     itemsArr.forEach((show) => {
       const genericContainer = document.createElement("div");
-      genericContainer.classList.add(`favorites-container`);
+      genericContainer.classList.add(container);
 
       const genericImg = document.createElement("img");
-      genericImg.classList.add(`favorite-img`);
+      genericImg.classList.add(imgSection);
       genericImg.addEventListener("click", () => {
         show.name === undefined
           ? (location.hash = `#movie=${show.id}-movie`)
           : (location.hash = `#movie=${show.id}-tv`);
       });
 
+      if (show.name === undefined) {
+        genericImg.setAttribute("alt", show.title);
+        showAlt = show.title;
+      } else if (show.title === undefined) {
+        genericImg.setAttribute("alt", show.name);
+        showAlt = show.name;
+      }
+
       if (show.poster_path === null) {
-        genericContainer.classList.add("missing-data");
+        genericImg.setAttribute(
+          "data-img",
+          "https://icon-library.com/images/light-icon-png/light-icon-png-21.jpg"
+        );
+        const foundAlt = document.createElement("span");
+        foundAlt.classList.add("altShowDescription");
+        foundAlt.textContent = showAlt;
+
+        foundAlt.addEventListener("click", () => {
+          show.name === undefined
+            ? (location.hash = `#movie=${show.id}-movie`)
+            : (location.hash = `#movie=${show.id}-tv`);
+        });
+
+        genericContainer.appendChild(foundAlt);
       } else {
         genericImg.setAttribute(
           "data-img",
           `https://image.tmdb.org/t/p/w185${show.poster_path}`
         );
       }
-
       // lazy loading
       lazyLoader.observe(genericImg);
 
       const likeBtn = document.createElement("button");
       likeBtn.classList.add("like-btn");
       likeBtn.innerHTML = `<i class="fa-solid fa-heart"></i>`;
+
+      likedItemList()[show.id] && likeBtn.classList.add("delete-favorite");
+
       likeBtn.addEventListener("click", () => {
         likeBtn.classList.toggle("delete-favorite");
         likeItem(show);
+        section == favList ? getFavoriteItemsMain() : getFavoriteItemsSection();
       });
 
       genericContainer.append(genericImg, likeBtn);
-      favList.appendChild(genericContainer);
+      section.appendChild(genericContainer);
     });
   }
+};
 
-  console.log(itemsArr);
+const getFavoriteItemsMain = () => {
+  getFavoriteItems(favList, "favorites-container", "favorite-img");
+};
+
+const getFavoriteItemsSection = () => {
+  getFavoriteItems(
+    favListSection,
+    "favorites-container__section",
+    "favorite-img__section"
+  );
 };

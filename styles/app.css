@@ -240,7 +240,7 @@ body {
 .network-container,
 .generic-container,
 .catalogue-container,
-.related-img,
+.item-related-img,
 .nav-item {
   cursor: pointer;
 }
@@ -335,13 +335,19 @@ body {
 }
 
 .tv-container,
-.movie-container {
+.movie-container,
+.favorites-container__section,
+.item-related-container {
   position: relative;
 }
 
 .tv-container:hover .like-btn,
 .movie-container:hover .like-btn,
-.generic-container:hover .like-btn {
+.generic-container:hover .like-btn,
+.favorites-container:hover .delete-favorite,
+.catalogue-container:hover .like-btn,
+.favorites-container__section:hover .like-btn,
+.item-related-container:hover .like-btn {
   opacity: 1;
 }
 
@@ -408,15 +414,37 @@ body {
   font-size: 4rem;
 }
 
+.catalogue-favorite {
+  padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-left: 22px;
+  justify-content: center;
+}
+
+.favorites-empty-container {
+  width: 100%;
+  padding: 28px 0;
+  text-align: center;
+}
+
 .favorites-container {
   width: 100px;
   height: 150px;
   cursor: pointer;
+  position: relative;
 }
 
 .favorites-container .favorite-img {
   height: 100%;
+  width: 100%;
   border-radius: 50%;
+}
+
+.favorite-img__section {
+  width: 120px;
+  height: 180px;
 }
 
 .network-container {
@@ -614,7 +642,7 @@ body {
 }
 
 .generic-container,
-.related-container {
+.item-container {
   position: relative;
 }
 
@@ -746,7 +774,7 @@ body {
   margin-bottom: 8px;
 }
 
-.related-img {
+.item-related-img {
   height: 140px;
 }
 
@@ -777,6 +805,7 @@ body {
   flex-wrap: wrap;
   gap: 8px;
   padding-left: 22px;
+  justify-content: center;
 }
 
 .catalogue-img {
@@ -880,19 +909,30 @@ body {
 /* MISSING DATA */
 
 .missing-data {
-  height: 152px;
-  width: 100px;
-  background: var(--almost-back);
-  text-align: center;
-  padding: 50px 0;
+  filter: contrast(0.1);
 }
 
-.missing-person {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  background: var(--secondary-text);
-  border-radius: 4px;
+.altShowDescription {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  bottom: calc(30%);
+  cursor: pointer;
+}
+
+/* ABOUT SECTION */
+
+#about-section {
+  padding: 40% 24px;
+  height: 88vh;
+  align-items: center;
+  line-height: 1.6;
+}
+
+#about-section a {
+  color: var(--white);
+  text-decoration: none;
 }
 
 /* ANIMATIONS */
